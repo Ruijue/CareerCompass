@@ -1,0 +1,12 @@
+streamlit
+langchain
+langchain-google-genai
+langchain-community
+python-dotenv
+PyPDF2
+docx2txt
+plotly
+pandas
+requests
+unstructured
+python-magic
