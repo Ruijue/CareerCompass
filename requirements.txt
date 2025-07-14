@@ -10,3 +10,5 @@ pandas
 requests
 unstructured
 python-magic
+weasyprint
+markdown

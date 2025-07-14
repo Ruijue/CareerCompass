@@ -41,18 +41,18 @@ load_dotenv()
 
 def get_api_key():
     # For testing purposes, return a mock API key
-    return "mock_api_key_for_testing"
+    # return "mock_api_key_for_testing"
     
     # Original implementation:
-    # # Then, check environment variables (for local development)
-    # if 'GOOGLE_API_KEY' in os.environ:
-    #     return os.environ['GOOGLE_API_KEY']
-    #     # First, check for API key in Streamlit secrets (for deployment)
-    # elif hasattr(st, 'secrets') and 'GOOGLE_API_KEY' in st.secrets:
-    #     return st.secrets['GOOGLE_API_KEY']
-    # # If no key is found, return None
-    # else:
-    #     return None
+    # Then, check environment variables (for local development)
+    if 'GOOGLE_API_KEY' in os.environ:
+        return os.environ['GOOGLE_API_KEY']
+        # First, check for API key in Streamlit secrets (for deployment)
+    elif hasattr(st, 'secrets') and 'GOOGLE_API_KEY' in st.secrets:
+        return st.secrets['GOOGLE_API_KEY']
+    # If no key is found, return None
+    else:
+        return None
 
 # Function to load and encode images for background
 
@@ -89,55 +89,55 @@ def initialize_llm():
     if not api_key:
         return None
         
-    # For testing purposes, create a mock LLM that returns predefined responses
-    class MockLLM:
-        def invoke(self, prompt):
-            return type('obj', (object,), {
-                'content': """
-# Resume Analysis
+#     # For testing purposes, create a mock LLM that returns predefined responses
+#     class MockLLM:
+#         def invoke(self, prompt):
+#             return type('obj', (object,), {
+#                 'content': """
+# # Resume Analysis
 
-## Overview
-This is a well-structured resume that highlights your experience in software development and project management.
+# ## Overview
+# This is a well-structured resume that highlights your experience in software development and project management.
 
-## Strengths
-- Clear organization with distinct sections
-- Good use of bullet points to highlight achievements
-- Relevant technical skills are listed
-- Education and certifications are well presented
+# ## Strengths
+# - Clear organization with distinct sections
+# - Good use of bullet points to highlight achievements
+# - Relevant technical skills are listed
+# - Education and certifications are well presented
 
-## Areas for Improvement
-- Consider adding more quantifiable achievements
-- Some bullet points could be more concise
-- Add a brief professional summary at the top
+# ## Areas for Improvement
+# - Consider adding more quantifiable achievements
+# - Some bullet points could be more concise
+# - Add a brief professional summary at the top
 
-## Skills Assessment
-- Technical Skills: Strong
-- Communication: Good
-- Leadership: Demonstrated through project management
-- Problem-solving: Evident in project descriptions
+# ## Skills Assessment
+# - Technical Skills: Strong
+# - Communication: Good
+# - Leadership: Demonstrated through project management
+# - Problem-solving: Evident in project descriptions
 
-## Recommendations
-1. Add metrics to demonstrate impact (e.g., improved efficiency by X%)
-2. Tailor skills section to match job descriptions
-3. Consider adding a brief professional summary
-4. Ensure consistent formatting throughout
+# ## Recommendations
+# 1. Add metrics to demonstrate impact (e.g., improved efficiency by X%)
+# 2. Tailor skills section to match job descriptions
+# 3. Consider adding a brief professional summary
+# 4. Ensure consistent formatting throughout
 
-## ATS Compatibility
-Your resume appears to be ATS-friendly with clear section headings and standard formatting.
-"""
-            })
+# ## ATS Compatibility
+# Your resume appears to be ATS-friendly with clear section headings and standard formatting.
+# """
+#             })
     
-    # Return the mock LLM instead of the real one
-    return MockLLM()
+#     # Return the mock LLM instead of the real one
+#     return MockLLM()
     
     # Original implementation:
-    # return ChatGoogleGenerativeAI(
-    #     model="gemini-2.0-flash",
-    #     temperature=0.2,
-    #     top_p=0.95,
-    #     top_k=40,
-    #     max_output_tokens=2048,
-    #     google_api_key=api_key)
+    return ChatGoogleGenerativeAI(
+        model="gemini-1.5-flash",
+        temperature=0.2,
+        top_p=0.95,
+        top_k=40,
+        max_output_tokens=2048,
+        google_api_key=api_key)
 
 
 # Initialize LLM with API key and advanced parameters
@@ -147,25 +147,25 @@ llm = initialize_llm()
 # Changed from "chat_history" to "history"
 memory = ConversationBufferMemory(memory_key="history")
 
-# Create a mock conversation chain for testing
-class MockConversation:
-    def __init__(self):
-        pass
+# # Create a mock conversation chain for testing
+# class MockConversation:
+#     def __init__(self):
+#         pass
         
-    def invoke(self, input_text):
-        return {
-            "response": "This is a mock response to your follow-up question. In a real application, this would be generated by the LLM based on your specific question and the context of the conversation."
-        }
+#     def invoke(self, input_text):
+#         return {
+#             "response": "This is a mock response to your follow-up question. In a real application, this would be generated by the LLM based on your specific question and the context of the conversation."
+#         }
 
-# Use the mock conversation instead of the real one
-conversation = MockConversation()
+# # Use the mock conversation instead of the real one
+# conversation = MockConversation()
 
 # Original implementation:
-# conversation = ConversationChain(
-#     llm=llm,
-#     memory=memory,
-#     verbose=True
-# )
+conversation = ConversationChain(
+    llm=llm,
+    memory=memory,
+    verbose=True
+)
 
 # Advanced text splitter for better document processing
 advanced_text_splitter = RecursiveCharacterTextSplitter(
@@ -215,15 +215,6 @@ class JobMatchTool(BaseTool):
 
 
 def add_navigation_sidebar():
-    if not st.session_state['user_authenticated']:
-        return
-
-    st.sidebar.success(f"Logged in as: {st.session_state['user_email']}")
-    if st.session_state['subscription_end_date']:
-        days_left = (
-            st.session_state['subscription_end_date'] - datetime.now()).days
-        st.sidebar.info(f"Subscription active: {days_left} days remaining")
-
     st.sidebar.markdown("## Navigation")
 
     # Dashboard button
@@ -248,20 +239,35 @@ def add_navigation_sidebar():
 
     st.sidebar.markdown("---")
 
+    # Global resume uploader
+    st.sidebar.markdown("## Upload Resume")
+    uploaded_file = st.sidebar.file_uploader(
+        "Upload your resume once for all tools", type=["pdf", "docx"], key="global_uploader")
+    if uploaded_file:
+        st.session_state.uploaded_resume = uploaded_file
+        st.sidebar.success(f"Uploaded: {uploaded_file.name}")
 
-# Initialize session state for user authentication and subscription
-if 'user_authenticated' not in st.session_state:
-    st.session_state['user_authenticated'] = False
-if 'subscription_active' not in st.session_state:
-    st.session_state['subscription_active'] = False
-if 'subscription_end_date' not in st.session_state:
-    st.session_state['subscription_end_date'] = None
-if 'user_email' not in st.session_state:
-    st.session_state['user_email'] = None
-if 'user_id' not in st.session_state:
-    st.session_state['user_id'] = None
+
 if 'current_page' not in st.session_state:
-    st.session_state['current_page'] = "login"
+    st.session_state['current_page'] = "dashboard"
+if 'activity_log' not in st.session_state:
+    st.session_state['activity_log'] = []
+if 'analysis_results' not in st.session_state:
+    st.session_state['analysis_results'] = None
+if 'key_insights' not in st.session_state:
+    st.session_state['key_insights'] = None
+if 'uploaded_resume' not in st.session_state:
+    st.session_state['uploaded_resume'] = None
+
+
+# Function to log user activity
+def log_activity(activity: str):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    st.session_state.activity_log.insert(0, {
+        "date": timestamp,
+        "activity": activity,
+        "status": "Complete"
+    })
 
 
 def process_docx(docx_file):
@@ -489,6 +495,33 @@ def generate_cover_letter(resume_text, job_description, company_info, tone="prof
     except Exception as e:
         st.error(f"Error generating cover letter: {str(e)}")
         return "Error generating cover letter. Please try again."
+
+
+# AI-powered function to extract structured insights from analysis text
+def extract_key_insights(analysis_text: str) -> Dict[str, Any]:
+    prompt = f"""
+    You are an expert in parsing and structuring information. From the following resume analysis, extract the key insights in JSON format. The JSON object should include:
+    - "strengths": A list of 3-5 key strengths.
+    - "weaknesses": A list of 2-4 areas for improvement.
+    - "scores": A dictionary of scores (Overall, Format, Content, ATS Compatibility) from 0-100.
+
+    Analysis Text:
+    {analysis_text}
+
+    Respond with ONLY the JSON object.
+    """
+    try:
+        response = llm.invoke(prompt).content
+        # Clean up the response to ensure it is valid JSON
+        json_response = response.strip()
+        if json_response.startswith('```json'):
+            json_response = json_response[7:-3].strip()
+        insights = json.loads(json_response)
+        return insights
+    except Exception as e:
+        st.error(f"Error extracting insights: {e}")
+        return None
+
 
 # Resume visualization function
 
@@ -823,15 +856,18 @@ def show_dashboard():
 
     # Display metrics in a modern dashboard layout
     st.markdown("## Resume Analytics")
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        create_metric_card(
-            "Resume Score", f"{metrics['resume_score']}%")
-    with col2:
-        create_metric_card("Industry Average", f"{metrics['industry_avg']}%")
-    with col3:
-        create_metric_card("ATS Match Score", f"{metrics['keyword_match']}%")
+    if st.session_state.key_insights:
+        scores = st.session_state.key_insights.get("scores", {})
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            create_metric_card("Overall Score", f"{scores.get('Overall', 'N/A')}")
+        with col2:
+            create_metric_card("Format Score", f"{scores.get('Format', 'N/A')}")
+        with col3:
+            create_metric_card("Content Score", f"{scores.get('Content', 'N/A')}")
+    else:
+        st.info(
+            "No resume analysis found. Upload your resume in the 'Resume Analysis' tab to see your scores.")
 
     # Add charts
     st.markdown("## Your Skills Analysis")
@@ -883,15 +919,10 @@ def show_dashboard():
 
     # Recent activity section (would be populated from database in real app)
     st.markdown("## Recent Activity")
-    activity_data = [
-        {"date": "May 15, 2023", "activity": "Generated 3 cover letters",
-            "status": "Complete"},
-        {"date": "May 12, 2023", "activity": "Resume analyzed", "status": "Complete"},
-        {"date": "May 10, 2023",
-            "activity": "Resume optimized for Software Engineer role", "status": "Complete"}
-    ]
-
-    st.table(pd.DataFrame(activity_data))
+    if st.session_state.activity_log:
+        st.table(pd.DataFrame(st.session_state.activity_log).head(5))
+    else:
+        st.info("No recent activity. Get started by using one of the tools above!")
 
 # Enhanced Resume Generator page with style selection
 
@@ -912,13 +943,12 @@ def show_resume_generator():
     tab1, tab2 = st.tabs(["Basic Generator", "Advanced Generator"])
 
     with tab1:
-        uploaded_file = st.file_uploader(
-            "Upload your current resume", type=["pdf", "docx"], key="resume_gen_uploader")
         target_job = st.text_area(
             "Enter the job title or description you're targeting (optional)", height=100)
 
-        if uploaded_file and st.button("Generate Improved Resume", use_container_width=True):
+        if st.session_state.uploaded_resume and st.button("Generate Improved Resume", use_container_width=True):
             with st.spinner("Analyzing and improving your resume..."):
+                uploaded_file = st.session_state.uploaded_resume
                 if uploaded_file.name.endswith('.docx'):
                     text = process_docx(uploaded_file)
                     resume_text = "\n".join([doc.page_content for doc in text])
@@ -930,6 +960,7 @@ def show_resume_generator():
                     resume_text, target_job, "modern")
 
                 st.success("Resume successfully improved!")
+                log_activity(f"Generated improved resume for {uploaded_file.name}")
                 with st.expander("View Improved Resume", expanded=True):
                     st.markdown(improved_resume)
 
@@ -956,11 +987,11 @@ def show_resume_generator():
                         )
                     else:
                         st.button("PDF Generation Failed", disabled=True, use_container_width=True)
+        elif not st.session_state.uploaded_resume:
+            st.warning("Please upload a resume in the sidebar to use this feature.")
 
     with tab2:
         st.markdown("### Advanced Resume Generator")
-        uploaded_file = st.file_uploader(
-            "Upload your current resume", type=["pdf", "docx"], key="adv_resume_gen_uploader")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -981,8 +1012,9 @@ def show_resume_generator():
         with col3:
             include_achievements = st.checkbox("Key Achievements", value=True)
 
-        if uploaded_file and st.button("Generate Advanced Resume", use_container_width=True):
+        if st.session_state.uploaded_resume and st.button("Generate Advanced Resume", use_container_width=True):
             with st.spinner("Creating your optimized resume..."):
+                uploaded_file = st.session_state.uploaded_resume
                 if uploaded_file.name.endswith('.docx'):
                     text = process_docx(uploaded_file)
                     resume_text = "\n".join([doc.page_content for doc in text])
@@ -994,6 +1026,8 @@ def show_resume_generator():
                     resume_text, target_job, style.lower())
 
                 st.success("Premium resume successfully generated!")
+                log_activity(
+                    f"Generated advanced resume ({style}) for {uploaded_file.name}")
 
                 tab1, tab2 = st.tabs(["Preview", "ATS Analysis"])
 
@@ -1040,6 +1074,8 @@ def show_resume_generator():
                         )
                     else:
                         st.button("PDF Generation Failed", disabled=True, use_container_width=True)
+        elif not st.session_state.uploaded_resume:
+            st.warning("Please upload a resume in the sidebar to use this feature.")
 
 # Enhanced Cover Letter Generator with tone selection
 
@@ -1057,17 +1093,18 @@ def show_cover_letter_generator():
             st.rerun()
 
     # Enhanced UI with sections
-    st.markdown("### Upload Your Information")
+    st.markdown("### Your Information")
 
-    col1, col2 = st.columns(2)
-    with col1:
-        uploaded_file = st.file_uploader(
-            "Upload your resume", type=["pdf", "docx"])
-    with col2:
-        tone = st.selectbox("Cover Letter Tone",
-                            ["Professional", "Enthusiastic",
-                                "Confident", "Formal", "Conversational"],
-                            index=0)
+    if not st.session_state.uploaded_resume:
+        st.warning("Please upload a resume in the sidebar to generate a cover letter.")
+        return
+
+    st.success(f"Using resume: {st.session_state.uploaded_resume.name}")
+
+    tone = st.selectbox("Cover Letter Tone",
+                        ["Professional", "Enthusiastic",
+                         "Confident", "Formal", "Conversational"],
+                        index=0)
 
     st.markdown("### Job Information")
     job_description = st.text_area("Paste the job description", height=150)
@@ -1086,8 +1123,9 @@ def show_cover_letter_generator():
     with col3:
         include_references = st.checkbox("Mention references", value=False)
 
-    if uploaded_file and job_description and st.button("Generate Cover Letter", use_container_width=True):
+    if job_description and st.button("Generate Cover Letter", use_container_width=True):
         with st.spinner("Creating your personalized cover letter..."):
+            uploaded_file = st.session_state.uploaded_resume
             if uploaded_file.name.endswith('.docx'):
                 text = process_docx(uploaded_file)
                 resume_text = "\n".join([doc.page_content for doc in text])
@@ -1099,6 +1137,7 @@ def show_cover_letter_generator():
                 resume_text, job_description, company_info, tone.lower())
 
             st.success("Cover letter successfully generated!")
+            log_activity(f"Generated cover letter for {uploaded_file.name}")
 
             # Use tabs for different views
             tab1, tab2 = st.tabs(["Preview", "Format Options"])
@@ -1156,22 +1195,10 @@ def show_resume_analysis():
     col1, col2 = st.columns([1, 2])
 
     with col1:
-       # st.markdown('<div class="upload-container">', unsafe_allow_html=True)
-        st.markdown("### Upload Your Resume")
-
-        # Add option for example resume
-        # use_example = st.checkbox("Use example resume")
-        use_example = False
-        if use_example:
-            # This would be a path to an actual example file
-            uploaded_file = "example_resume.pdf"
-            st.info("Using example resume")
-        else:
-            uploaded_file = st.file_uploader(
-                "", type=["pdf", "docx"], key="resume_uploader")
-
-        if uploaded_file and not use_example:
-            st.success(f"Uploaded: {uploaded_file.name}")
+        st.markdown("### Your Uploaded Resume")
+        if st.session_state.uploaded_resume:
+            uploaded_file = st.session_state.uploaded_resume
+            st.success(f"Ready to analyze: {uploaded_file.name}")
             file_details = {
                 "Filename": uploaded_file.name,
                 "File size": f"{uploaded_file.size / 1024:.2f} KB",
@@ -1180,15 +1207,18 @@ def show_resume_analysis():
             for key, value in file_details.items():
                 st.text(f"{key}: {value}")
 
-        # Optional target job field
-        # target_job = st.text_input("Target job position (optional)")
+            if st.button("Analyze Resume", use_container_width=True):
+                st.session_state.analysis_triggered = True
+        else:
+            st.warning("Please upload a resume in the sidebar to begin analysis.")
+
         target_job = ""
-        st.markdown('</div>', unsafe_allow_html=True)
 
     # Main column for results
     with col2:
-        if uploaded_file is not None and not use_example:
+        if st.session_state.get('analysis_triggered'):
             with st.spinner("Analyzing your resume..."):
+                uploaded_file = st.session_state.uploaded_resume
                 progress_bar = st.progress(0)
 
                 # Process the file based on extension
@@ -1210,7 +1240,7 @@ def show_resume_analysis():
                 progress_bar.progress(50)
                 time.sleep(0.5)  # Simulate processing time
 
-                # Setup enhanced prompts with more detailed instructions - FIX HERE
+                # Setup enhanced prompts with more detailed instructions
                 prompt_template_str = """
                 You are a professional CV analyzer with expertise in resume evaluation and career coaching.
                 Write a detailed analysis of the following resume content:
@@ -1226,218 +1256,143 @@ def show_resume_analysis():
                 # Handle target job separately after chain execution if needed
                 resume_content = "\n".join([doc.page_content for doc in text])
 
-                refine_template = (
-                    # ...existing template...
-                    "Your job is to produce a final outcome\n"
-                    "We have provided an existing detail: {existing_answer}\n"
-                    "We want a refined version of the existing detail based on initial details below\n"
-                    "--------\n"
-                    "Given the new context, refine the original summary in the following manner using proper markdown formatting:\n"
-                    # ...rest of the template...
-                )
-
-                # Create a proper PromptTemplate object for the refine template
-                refine_prompt = PromptTemplate(
-                    template=refine_template,
-                    input_variables=["existing_answer", "text"]
-                )
-
                 # For testing purposes, skip the actual chain execution and use a mock result
                 # Original implementation:
-                # chain = load_summarize_chain(
-                #     llm=llm,
-                #     chain_type="refine",
-                #     question_prompt=prompt,
-                #     refine_prompt=refine_prompt,
-                #     return_intermediate_steps=True,
-                #     input_key="input_documents",
-                #     output_key="output_text",
-                # )
-                
-                # Define a mock chain function that returns predefined results
-                def chain(input_dict, return_only_outputs=False):
-                    return {
-                        "output_text": """
-# Resume Analysis
+                chain = load_summarize_chain(
+                    llm=llm,
+                    chain_type="stuff",
+                    prompt=prompt,
+                    input_key="input_documents",
+                    output_key="output_text",
+                )
 
-## Overview
-This is a well-structured resume that highlights your experience in software development and project management.
-
-## Strengths
-- Clear organization with distinct sections
-- Good use of bullet points to highlight achievements
-- Relevant technical skills are listed
-- Education and certifications are well presented
-
-## Areas for Improvement
-- Consider adding more quantifiable achievements
-- Some bullet points could be more concise
-- Add a brief professional summary at the top
-
-## Skills Assessment
-- Technical Skills: Strong
-- Communication: Good
-- Leadership: Demonstrated through project management
-- Problem-solving: Evident in project descriptions
-
-## Recommendations
-1. Add metrics to demonstrate impact (e.g., improved efficiency by X%)
-2. Tailor skills section to match job descriptions
-3. Consider adding a brief professional summary
-4. Ensure consistent formatting throughout
-
-## ATS Compatibility
-Your resume appears to be ATS-friendly with clear section headings and standard formatting.
-"""
-                }
+                # Call our mock chain function
+                result = chain({"input_documents": text}, return_only_outputs=True)
 
                 # If target job is specified, we can add this information to the output
                 if target_job:
                     job_prompt = f"\n\n## Target Job Analysis\nAdditional analysis for target job: {target_job}"
                     result['output_text'] += job_prompt
 
-                progress_bar.progress(75)
-                time.sleep(0.5)  # Simulate processing time
+                # Log the activity and store results in session state
+                log_activity(f"Analyzed resume: {uploaded_file.name}")
+                st.session_state.analysis_results = result['output_text']
+                st.session_state.key_insights = extract_key_insights(
+                    result['output_text'])
 
-                # Call our mock chain function
-                result = chain({"input_documents": text}, return_only_outputs=True)
-                
                 progress_bar.progress(100)
                 time.sleep(0.5)  # Simulate completion
 
                 # Hide the progress elements
                 progress_bar.empty()
 
-                # Parse the result into sections
-                output_text = result['output_text']
-                sections = output_text.split('##')
+                # Reset the trigger
+                st.session_state.analysis_triggered = False
 
-                # Create tabs for different views of the analysis
-                tab1, tab2, tab3 = st.tabs(
-                    ["Analysis", "Insights", "Visualization"])
+        if st.session_state.analysis_results:
+            # Parse the result into sections
+            output_text = st.session_state.analysis_results
+            sections = output_text.split('##')
 
-                with tab1:
-                    # Display a success message
-                    st.success(
-                        "Analysis complete! Review your personalized career guidance below.")
+            # Create tabs for different views of the analysis
+            tab1, tab2, tab3 = st.tabs(
+                ["Analysis", "Insights", "Visualization"])
 
-                    # Process each section with better styling
-                    for section in sections:
-                        if section.strip():  # Skip empty sections
-                            lines = section.strip().split('\n', 1)
-                            if len(lines) > 0:
-                                section_title = lines[0].strip()
-                                section_content = lines[1].strip() if len(
-                                    lines) > 1 else ""
+            with tab1:
+                # Display a success message
+                st.success(
+                    "Analysis complete! Review your personalized career guidance below.")
 
-                                # Special handling for Name and Email sections
-                                if section_title.lower() == "name" or section_title.lower() == "email":
+                # Process each section with better styling
+                for section in sections:
+                    if section.strip():  # Skip empty sections
+                        lines = section.strip().split('\n', 1)
+                        if len(lines) > 0:
+                            section_title = lines[0].strip()
+                            section_content = lines[1].strip() if len(
+                                lines) > 1 else ""
+
+                            # Special handling for Name and Email sections
+                            if section_title.lower() == "name" or section_title.lower() == "email":
+                                st.markdown(
+                                    f"<h3 class='section-header'>{section_title}</h3>", unsafe_allow_html=True)
+                                st.markdown(
+                                    f"<p>{section_content}</p>", unsafe_allow_html=True)
+                                if section_title.lower() == "email":
                                     st.markdown(
-                                        f"<h3 class='section-header'>{section_title}</h3>", unsafe_allow_html=True)
-                                    st.markdown(
-                                        f"<p>{section_content}</p>", unsafe_allow_html=True)
-                                    if section_title.lower() == "email":
-                                        st.markdown(
-                                            "<hr>", unsafe_allow_html=True)
-                                else:
-                                    # Create an expander for other sections
-                                    with st.expander(f"{section_title}", expanded=False):
-                                        st.markdown(section_content)
+                                        "<hr>", unsafe_allow_html=True)
+                            else:
+                                # Create an expander for other sections
+                                with st.expander(f"{section_title}", expanded=False):
+                                    st.markdown(section_content)
 
-                with tab2:
-                    # Create a summary of key insights
-                    st.subheader("Key Insights")
+            with tab2:
+                # Create a summary of key insights
+                st.subheader("Key Insights")
 
-                    # Extract insights from the analysis
-                    try:
-                        # In a real implementation, we would use more sophisticated extraction
-                        strengths = []
-                        improvements = []
+                if st.session_state.key_insights:
+                    insights = st.session_state.key_insights
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown("### Strengths")
+                        for strength in insights.get("strengths", []):
+                            st.success(strength)
 
-                        for section in sections:
-                            if "Career Assessment" in section:
-                                lines = section.split("\n")
-                                for line in lines:
-                                    if line.strip().startswith("- ") and "strength" in line.lower():
-                                        strengths.append(line.strip()[2:])
-                            elif "Resume Gaps" in section:
-                                lines = section.split("\n")
-                                for line in lines:
-                                    if line.strip().startswith("- "):
-                                        improvements.append(line.strip()[2:])
+                    with col2:
+                        st.markdown("### Areas for Improvement")
+                        for weakness in insights.get("weaknesses", []):
+                            st.warning(weakness)
 
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.markdown("### Strengths")
-                            for strength in strengths[:3]:  # Show top 3
-                                st.success(strength)
-
-                        with col2:
-                            st.markdown("### Areas for Improvement")
-                            for improvement in improvements[:3]:  # Show top 3
-                                st.warning(improvement)
-
-                        # Resume Scores
-                        st.markdown("### Resume Score")
-
-                        # In a real implementation, these would be derived from actual analysis
-                        scores = {
-                            "Overall": 78,
-                            "Format": 85,
-                            "Content": 76,
-                            "ATS Compatibility": 82,
-                            "Industry Relevance": 75
-                        }
-
-                        # Display scores as horizontal bars
+                    # Resume Scores
+                    st.markdown("### Resume Score")
+                    scores = insights.get("scores", {})
+                    if scores:
                         for category, score in scores.items():
-                            col1, col2 = st.columns([3, 1])
-                            with col1:
-                                st.progress(score/100)
-                            with col2:
-                                st.write(f"{score}%")
-                            st.caption(category)
-
-                    except Exception as e:
-                        st.error(f"Error generating insights: {str(e)}")
-                        st.write(
-                            "Could not generate insights from the analysis. Please try again.")
-
-                with tab3:
-                    # Generate skill visualization
-                    st.subheader("Skills Visualization")
-
-                    skills_chart = generate_skills_chart(output_text)
-                    if skills_chart:
-                        st.plotly_chart(skills_chart, use_container_width=True)
+                            st.progress(score / 100)
+                            st.caption(f"{category}: {score}%")
                     else:
-                        st.info(
-                            "Skills visualization could not be generated. Please check the analysis for skills information.")
+                        st.info("No scores were extracted from the analysis.")
+                else:
+                    st.info(
+                        "Could not extract key insights. View the full analysis in the 'Analysis' tab.")
 
-                # Add download options
-                st.download_button(
-                    label="Download Analysis as Text",
-                    data=result['output_text'],
-                    file_name=f"career_analysis_{uploaded_file.name.split('.')[0] if not use_example else 'example'}.txt",
-                    mime="text/plain"
-                )
+            with tab3:
+                # Generate skill visualization
+                st.subheader("Skills Visualization")
 
-                # Add option for follow-up questions
-                st.markdown("### Have questions about your analysis?")
-                follow_up = st.text_input(
-                    "Ask a follow-up question about your resume or the analysis")
+                skills_chart = generate_skills_chart(output_text)
+                if skills_chart:
+                    st.plotly_chart(skills_chart, use_container_width=True)
+                else:
+                    st.info(
+                        "Skills visualization could not be generated. Please check the analysis for skills information.")
 
-                if follow_up:
-                    with st.spinner("Generating response..."):
-                        # Use the conversation chain for context-aware responses
-                        conversation.memory.save_context(
-                            # First 1000 chars for context
-                            {"input": f"Resume analysis: {output_text[:1000]}..."},
-                            {"output": "I've analyzed this resume."}
-                        )
+            # Add download options
+            st.download_button(
+                label="Download Analysis as Text",
+                data=st.session_state.analysis_results,
+                file_name=f"career_analysis_{st.session_state.uploaded_resume.name.split('.')[0]}.txt",
+                mime="text/plain"
+            )
 
-                        response = conversation.predict(input=follow_up)
-                        st.write(response)
+            # Add option for follow-up questions
+            st.markdown("### Have questions about your analysis?")
+            follow_up = st.text_input(
+                "Ask a follow-up question about your resume or the analysis")
+
+            if follow_up:
+                with st.spinner("Generating response..."):
+                    # Use the conversation chain for context-aware responses
+                    conversation.memory.save_context(
+                        # First 1000 chars for context
+                        {"input": f"Resume analysis: {output_text[:1000]}..."},
+                        {"output": "I've analyzed this resume."}
+                    )
+
+                    response = conversation.predict(input=follow_up)
+                    st.write(response)
+        else:
+            st.info("Upload your resume and click 'Analyze Resume' to see the results.")
 
 
 def main():
@@ -1607,6 +1562,8 @@ def main():
     # Bypass authentication for testing
     st.session_state['user_authenticated'] = True
     st.session_state['subscription_active'] = True
+    if st.session_state['user_authenticated'] and 'user_id' not in st.session_state:
+        st.session_state['user_id'] = "test_user" # Initialize with a default user ID for testing
     
     # Set default page if not set
     if 'current_page' not in st.session_state:
