@@ -319,204 +319,176 @@ def process_pdf(pdf_file):
 
 
 def generate_improved_resume(resume_text, target_job=None, style="modern"):
-    # Mock implementation for testing purposes
-    # Original implementation commented out below
+    prompt_template = """
+    You are a professional resume writer with expertise in creating impactful, ATS-friendly resumes.
     
-    # prompt_template = """
-    # You are a professional resume writer with expertise in creating impactful, ATS-friendly resumes.
-    # 
-    # Based on the following resume content:
-    # {resume_text}
-    # 
-    # Create an improved, professionally formatted resume in the {style} style that:
-    # 1. Emphasizes key achievements and quantifiable results
-    # 2. Uses strong action verbs and industry-specific keywords
-    # 3. Optimizes for ATS systems with appropriate keyword placement
-    # 4. Follows modern resume best practices
-    # 5. Maintains all original information but presents it more effectively
-    # 6. Improves layout and organization for better readability
-    # 7. Ensures proper formatting with clear section headers
-    # 
-    # {job_target_info}
-    # 
-    # Format the resume sections with proper markdown and ensure it's ready for professional use.
-    # Include a Skills section that highlights technical, soft, and transferable skills relevant to their career.
-    # 
-    # Your response MUST be in markdown format suitable for professional presentation.
-    # """
-    #
-    # job_target_text = ""
-    # if target_job:
-    #     job_target_text = f"""Target the resume specifically for this job description or industry: {target_job}
-    #     Analyze the job description to identify key requirements and ensure relevant skills and experiences are 
-    #     highlighted prominently. Include industry-specific keywords from the job description."""
-    #
-    # prompt = PromptTemplate.from_template(prompt_template).format(
-    #     resume_text=resume_text,
-    #     job_target_info=job_target_text,
-    #     style=style
-    # )
-    #
-    # try:
-    #     response = llm.invoke(prompt)
-    #     return response.content
-    # except Exception as e:
-    #     st.error(f"Error generating resume: {str(e)}")
-    #     return "Error generating resume. Please try again."
+    Based on the following resume content:
+    {resume_text}
     
-    # Mock improved resume for testing
-    target_info = f"\n\n**Targeted for:** {target_job}" if target_job else ""
+    Create an improved, professionally formatted resume in the {style} style that:
+    1. Emphasizes key achievements and quantifiable results
+    2. Uses strong action verbs and industry-specific keywords
+    3. Optimizes for ATS systems with appropriate keyword placement
+    4. Follows modern resume best practices
+    5. Maintains all original information but presents it more effectively
+    6. Improves layout and organization for better readability
+    7. Ensures proper formatting with clear section headers
     
-    return f"""# John Doe
-**Software Engineer | Full-Stack Developer**
+    {job_target_info}
+    
+    Format the resume sections with proper markdown and ensure it's ready for professional use.
+    Include a Skills section that highlights technical, soft, and transferable skills relevant to their career.
+    
+    Your response MUST be in markdown format suitable for professional presentation.
+    """
 
-📧 john.doe@email.com | 📱 (555) 123-4567 | 🌐 linkedin.com/in/johndoe | 💻 github.com/johndoe
+    job_target_text = ""
+    if target_job:
+        job_target_text = f"""Target the resume specifically for this job description or industry: {target_job}
+        Analyze the job description to identify key requirements and ensure relevant skills and experiences are 
+        highlighted prominently. Include industry-specific keywords from the job description."""
 
----
+    prompt = PromptTemplate.from_template(prompt_template).format(
+        resume_text=resume_text,
+        job_target_info=job_target_text,
+        style=style
+    )
 
-## Professional Summary
+    try:
+        response = llm.invoke(prompt)
+        return response.content
+    except Exception as e:
+        st.error(f"Error generating resume: {str(e)}")
+        return "Error generating resume. Please try again."
 
-Experienced software engineer with 5+ years of expertise in full-stack development, specializing in modern web technologies and cloud solutions. Proven track record of delivering scalable applications that improved user engagement by 40% and reduced system downtime by 60%.
-
-## Technical Skills
-
-**Programming Languages:** Python, JavaScript, TypeScript, Java, C++
-**Frontend:** React, Vue.js, Angular, HTML5, CSS3, Tailwind CSS
-**Backend:** Node.js, Django, Flask, Express.js, Spring Boot
-**Databases:** PostgreSQL, MongoDB, Redis, MySQL
-**Cloud & DevOps:** AWS, Docker, Kubernetes, CI/CD, Jenkins
-**Tools:** Git, Jira, Figma, Postman
-
-## Professional Experience
-
-### Senior Software Engineer | TechCorp Inc.
-*January 2021 - Present*
-
-• Led development of microservices architecture serving 1M+ daily users
-• Implemented automated testing pipeline, reducing deployment time by 50%
-• Mentored 3 junior developers and conducted code reviews
-• Collaborated with cross-functional teams to deliver features ahead of schedule
-
-### Software Developer | StartupXYZ
-*June 2019 - December 2020*
-
-• Built responsive web applications using React and Node.js
-• Optimized database queries, improving application performance by 35%
-• Integrated third-party APIs and payment processing systems
-• Participated in agile development cycles and sprint planning
-
-## Education
-
-**Bachelor of Science in Computer Science**
-University of Technology | 2015 - 2019
-*Magna Cum Laude, GPA: 3.8/4.0*
-
-## Certifications
-
-• AWS Certified Solutions Architect
-• Google Cloud Professional Developer
-• Certified Scrum Master (CSM)
-
-## Projects
-
-**E-commerce Platform** | *Personal Project*
-• Developed full-stack e-commerce solution with React and Django
-• Implemented secure payment processing and inventory management
-• Deployed on AWS with auto-scaling capabilities
-
-**Task Management App** | *Open Source*
-• Created collaborative task management tool with real-time updates
-• Used WebSocket for live collaboration features
-• Gained 500+ GitHub stars and 50+ contributors
-
----
-
-*Resume generated in {style} style*{target_info}"""
+# PDF generation function
+def markdown_to_pdf(markdown_content, filename="resume.pdf"):
+    """Convert markdown content to PDF using weasyprint"""
+    try:
+        import markdown
+        from weasyprint import HTML, CSS
+        from io import BytesIO
+        
+        # Convert markdown to HTML
+        html_content = markdown.markdown(markdown_content)
+        
+        # Add basic CSS styling for professional look
+        css_content = """
+        @page {
+            margin: 1in;
+            size: letter;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 8.5in;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p, li {
+            margin-bottom: 8px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        strong {
+            color: #2c3e50;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #bdc3c7;
+            margin: 20px 0;
+        }
+        """
+        
+        # Create full HTML document
+        full_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Resume</title>
+        </head>
+        <body>
+            {html_content}
+        </body>
+        </html>
+        """
+        
+        # Generate PDF
+        pdf_buffer = BytesIO()
+        HTML(string=full_html).write_pdf(pdf_buffer, stylesheets=[CSS(string=css_content)])
+        pdf_buffer.seek(0)
+        
+        return pdf_buffer.getvalue()
+        
+    except Exception as e:
+        st.error(f"Error generating PDF: {str(e)}")
+        return None
 
 # Enhanced cover letter generation with tone and style options
 
 
 def generate_cover_letter(resume_text, job_description, company_info, tone="professional"):
-    # Mock implementation for testing purposes
-    # Original implementation commented out below
+    prompt_template = """
+    You are a professional cover letter writer with expertise in creating compelling, personalized cover letters.
     
-    # prompt_template = """
-    # You are a professional cover letter writer with expertise in creating compelling, personalized cover letters.
-    # 
-    # Based on:
-    # 
-    # RESUME:
-    # {resume_text}
-    # 
-    # JOB DESCRIPTION:
-    # {job_description}
-    # 
-    # COMPANY INFORMATION:
-    # {company_info}
-    # 
-    # TONE REQUESTED: 
-    # {tone}
-    # 
-    # Create a compelling cover letter that:
-    # 1. Is personalized to the specific job and company
-    # 2. Highlights relevant experience from the resume that matches the job description
-    # 3. Demonstrates understanding of the company's values and goals
-    # 4. Uses a {tone} tone throughout
-    # 5. Includes a strong attention-grabbing opening
-    # 6. Provides specific examples of achievements relevant to the role
-    # 7. Includes a confident closing with a clear call to action
-    # 8. Is between 250-350 words
-    # 
-    # Format the cover letter professionally with proper salutation, paragraphs, and signature.
-    # Your response MUST be in markdown format suitable for professional presentation.
-    # """
-    #
-    # prompt = PromptTemplate.from_template(prompt_template).format(
-    #     resume_text=resume_text,
-    #     job_description=job_description,
-    #     company_info=company_info,
-    #     tone=tone
-    # )
-    #
-    # try:
-    #     response = llm.invoke(prompt)
-    #     return response.content
-    # except Exception as e:
-    #     st.error(f"Error generating cover letter: {str(e)}")
-    #     return "Error generating cover letter. Please try again."
+    Based on:
     
-    # Mock cover letter for testing
-    company_name = "the company" if not company_info else "this innovative organization"
-    job_title = "the position" if not job_description else "this exciting opportunity"
+    RESUME:
+    {resume_text}
     
-    return f"""# Cover Letter
+    JOB DESCRIPTION:
+    {job_description}
+    
+    COMPANY INFORMATION:
+    {company_info}
+    
+    TONE REQUESTED: 
+    {tone}
+    
+    Create a compelling cover letter that:
+    1. Is personalized to the specific job and company
+    2. Highlights relevant experience from the resume that matches the job description
+    3. Demonstrates understanding of the company's values and goals
+    4. Uses a {tone} tone throughout
+    5. Includes a strong attention-grabbing opening
+    6. Provides specific examples of achievements relevant to the role
+    7. Includes a confident closing with a clear call to action
+    8. Is between 250-350 words
+    
+    Format the cover letter professionally with proper salutation, paragraphs, and signature.
+    Your response MUST be in markdown format suitable for professional presentation.
+    """
 
-**John Doe**  
-john.doe@email.com | (555) 123-4567  
-LinkedIn: linkedin.com/in/johndoe
+    prompt = PromptTemplate.from_template(prompt_template).format(
+        resume_text=resume_text,
+        job_description=job_description,
+        company_info=company_info,
+        tone=tone
+    )
 
----
-
-**Date:** {__import__('datetime').datetime.now().strftime('%B %d, %Y')}
-
-**Dear Hiring Manager,**
-
-I am writing to express my strong interest in {job_title} at {company_name}. With over 5 years of experience in software engineering and a proven track record of delivering scalable solutions, I am excited about the opportunity to contribute to your team's continued success.
-
-In my current role as Senior Software Engineer at TechCorp Inc., I have successfully led the development of microservices architecture serving over 1 million daily users, directly aligning with the technical challenges mentioned in your job description. My experience with modern web technologies, including React, Node.js, and cloud platforms, has enabled me to deliver applications that improved user engagement by 40% and reduced system downtime by 60%.
-
-What particularly draws me to {company_name} is your commitment to innovation and technical excellence. Your company's focus on cutting-edge solutions resonates with my passion for leveraging technology to solve complex problems. I am especially excited about the opportunity to work with your talented team and contribute to projects that make a meaningful impact.
-
-My technical expertise in full-stack development, combined with my experience in mentoring junior developers and implementing automated testing pipelines, positions me well to excel in this role. I am confident that my skills in Python, JavaScript, AWS, and agile methodologies will enable me to make immediate contributions to your development team.
-
-I would welcome the opportunity to discuss how my experience and enthusiasm can contribute to your team's objectives. Thank you for considering my application. I look forward to hearing from you soon.
-
-**Sincerely,**  
-John Doe
-
----
-
-*Cover letter generated with {tone} tone*"""
+    try:
+        response = llm.invoke(prompt)
+        return response.content
+    except Exception as e:
+        st.error(f"Error generating cover letter: {str(e)}")
+        return "Error generating cover letter. Please try again."
 
 # Resume visualization function
 
@@ -972,9 +944,18 @@ def show_resume_generator():
                         use_container_width=True
                     )
                 with col2:
-                    # In a full implementation, we would convert to PDF and offer download
-                    st.button("Download as PDF (Premium)",
-                              disabled=True, use_container_width=True)
+                    # Generate PDF and offer download
+                    pdf_data = markdown_to_pdf(improved_resume)
+                    if pdf_data:
+                        st.download_button(
+                            label="Download as PDF",
+                            data=pdf_data,
+                            file_name="improved_resume.pdf",
+                            mime="application/pdf",
+                            use_container_width=True
+                        )
+                    else:
+                        st.button("PDF Generation Failed", disabled=True, use_container_width=True)
 
     with tab2:
         st.markdown("### Advanced Resume Generator")
@@ -1047,8 +1028,18 @@ def show_resume_generator():
                         use_container_width=True
                     )
                 with col2:
-                    st.button("Download as PDF (Premium)",
-                              disabled=True, use_container_width=True)
+                    # Generate PDF and offer download
+                    pdf_data = markdown_to_pdf(improved_resume)
+                    if pdf_data:
+                        st.download_button(
+                            label="Download as PDF",
+                            data=pdf_data,
+                            file_name="premium_resume.pdf",
+                            mime="application/pdf",
+                            use_container_width=True
+                        )
+                    else:
+                        st.button("PDF Generation Failed", disabled=True, use_container_width=True)
 
 # Enhanced Cover Letter Generator with tone selection
 
@@ -1133,8 +1124,18 @@ def show_cover_letter_generator():
                     use_container_width=True
                 )
             with col2:
-                st.button("Download as PDF (Premium)",
-                          disabled=True, use_container_width=True)
+                # Generate PDF and offer download
+                pdf_data = markdown_to_pdf(cover_letter)
+                if pdf_data:
+                    st.download_button(
+                        label="Download as PDF",
+                        data=pdf_data,
+                        file_name="cover_letter.pdf",
+                        mime="application/pdf",
+                        use_container_width=True
+                    )
+                else:
+                    st.button("PDF Generation Failed", disabled=True, use_container_width=True)
 
 # Enhanced Resume Analysis with visualizations
 
