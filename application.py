@@ -272,9 +272,7 @@ class InterviewPreparationTool(BaseTool):
 
 
 def add_navigation_sidebar():
-    st.sidebar.markdown("## Navigation")
-
-    # Theme toggle
+    # Theme toggle - Moved to the top
     st.sidebar.markdown("### Theme")
     if 'theme' not in st.session_state:
         st.session_state['theme'] = 'light'
@@ -284,38 +282,42 @@ def add_navigation_sidebar():
         st.session_state['theme'] = theme_option
         st.rerun()
 
+    st.sidebar.markdown("---") # Separator after theme
+
+    st.sidebar.markdown("## Navigation")
+
     # Dashboard button
-    if st.sidebar.button("Dashboard", key="nav_dashboard"):
+    if st.sidebar.button("Dashboard", key="nav_dashboard", use_container_width=True):
         st.session_state['current_page'] = "dashboard"
         st.rerun()
 
     # Resume Analysis button
-    if st.sidebar.button("Resume Analysis", key="nav_resume_analysis"):
+    if st.sidebar.button("Resume Analysis", key="nav_resume_analysis", use_container_width=True):
         st.session_state['current_page'] = "resume_analysis"
         st.rerun()
 
     # Resume Generator button
-    if st.sidebar.button("Resume Generator", key="nav_resume_generator"):
+    if st.sidebar.button("Resume Generator", key="nav_resume_generator", use_container_width=True):
         st.session_state['current_page'] = "resume_generator"
         st.rerun()
 
     # Cover Letter Generator button
-    if st.sidebar.button("Cover Letter Generator", key="nav_cover_letter"):
+    if st.sidebar.button("Cover Letter Generator", key="nav_cover_letter", use_container_width=True):
         st.session_state['current_page'] = "cover_letter_generator"
         st.rerun()
 
     # Resume-Job Matcher button
-    if st.sidebar.button("Resume-Job Matcher", key="nav_resume_job_matcher"):
+    if st.sidebar.button("Resume-Job Matcher", key="nav_resume_job_matcher", use_container_width=True):
         st.session_state['current_page'] = "resume_job_matcher"
         st.rerun()
 
     # Job Recommendation button
-    if st.sidebar.button("Job Recommendation", key="nav_job_recommendation"):
+    if st.sidebar.button("Job Recommendation", key="nav_job_recommendation", use_container_width=True):
         st.session_state['current_page'] = "job_recommendation"
         st.rerun()
 
     # Interview Preparation button
-    if st.sidebar.button("Interview Preparation", key="nav_interview_preparation"):
+    if st.sidebar.button("Interview Preparation", key="nav_interview_preparation", use_container_width=True):
         st.session_state['current_page'] = "interview_preparation"
         st.rerun()
 
