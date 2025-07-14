@@ -273,16 +273,7 @@ class InterviewPreparationTool(BaseTool):
 
 def add_navigation_sidebar():
     # Theme toggle - Moved to the top
-    st.sidebar.markdown("### Theme")
-    if 'theme' not in st.session_state:
-        st.session_state['theme'] = 'light'
-
-    theme_option = st.sidebar.radio("Select Theme", ('light', 'dark'), key='theme_selector')
-    if theme_option != st.session_state['theme']:
-        st.session_state['theme'] = theme_option
-        st.rerun()
-
-    st.sidebar.markdown("---") # Separator after theme
+    
 
     st.sidebar.markdown("## Navigation")
 
@@ -1731,76 +1722,51 @@ def main():
     :root {
         --primary-color: #4f8bf9;
         --secondary-color: #6a5acd;
-        --background-light: #f0f2f6;
-        --background-card-light: #ffffff;
-        --text-color-light: #333;
-        --header-color-light: #2c3e50;
-        --border-color-light: #e0e0e0;
-        --shadow-color-light: rgba(0, 0, 0, 0.08);
-        --sidebar-bg-light: #2c3e50;
-        --sidebar-text-light: white;
-        --button-bg-light: var(--primary-color);
-        --button-hover-light: #3a7bd5;
-        --tab-bg-light: #e9ecef;
-        --tab-hover-light: #dee2e6;
-        --tab-selected-light: var(--primary-color);
-        --alert-success-bg-light: #d4edda;
-        --alert-success-text-light: #155724;
-        --alert-success-border-light: #c3e6cb;
-        --alert-warning-bg-light: #fff3cd;
-        --alert-warning-text-light: #856404;
-        --alert-warning-border-light: #ffeeba;
-        --alert-error-bg-light: #f8d7da;
-        --alert-error-text-light: #721c24;
-        --alert-error-border-light: #f5c6cb;
+        --background: #f0f2f6;
+        --background-card: #ffffff;
+        --text-color: #333;
+        --header-color: #2c3e50;
+        --border-color: #e0e0e0;
+        --shadow-color: rgba(0, 0, 0, 0.08);
+        --sidebar-bg: #2c3e50;
+        --sidebar-text: white;
+        --button-bg: var(--primary-color);
+        --button-hover: #3a7bd5;
+        --tab-bg: #e9ecef;
+        --tab-hover: #dee2e6;
+        --tab-selected: var(--primary-color);
+        --alert-success-bg: #d4edda;
+        --alert-success-text: #155724;
+        --alert-success-border: #c3e6cb;
+        --alert-warning-bg: #fff3cd;
+        --alert-warning-text: #856404;
+        --alert-warning-border: #ffeeba;
+        --alert-error-bg: #f8d7da;
+        --alert-error-text: #721c24;
+        --alert-error-border: #f5c6cb;
     }
 
-    .dark-theme {
-        --primary-color: #91a8ed; /* Lighter blue for dark mode */
-        --secondary-color: #b19cd9; /* Lighter purple for dark mode */
-        --background-light: #1a1a2e; /* Dark background */
-        --background-card-light: #2a2a4a; /* Darker card background */
-        --text-color-light: #e0e0e0; /* Light text */
-        --header-color-light: #f0f0f0; /* Lighter headings */
-        --border-color-light: #444466;
-        --shadow-color-light: rgba(0, 0, 0, 0.3);
-        --sidebar-bg-light: #0f0f1a;
-        --sidebar-text-light: #e0e0e0;
-        --button-bg-light: var(--primary-color);
-        --button-hover-light: #7b92d1;
-        --tab-bg-light: #3a3a5a;
-        --tab-hover-light: #4a4a6a;
-        --tab-selected-light: var(--primary-color);
-        --alert-success-bg-light: #28a745;
-        --alert-success-text-light: #ffffff;
-        --alert-success-border-light: #218838;
-        --alert-warning-bg-light: #ffc107;
-        --alert-warning-text-light: #343a40;
-        --alert-warning-border-light: #e0a800;
-        --alert-error-bg-light: #dc3545;
-        --alert-error-text-light: #ffffff;
-        --alert-error-border-light: #c82333;
-    }
+    
 
     /* General Body and Layout */
     body {
         font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        color: var(--text-color-light);
+        color: var(--text-color);
         line-height: 1.6;
-        background-color: var(--background-light);
+        background-color: var(--background);
         transition: background-color 0.3s ease, color 0.3s ease;
     }
     .main {
-        background-color: var(--background-light); /* Light gray background */
+        background-color: var(--background-card); /* Light gray background */
         padding: 2rem;
         border-radius: 8px;
-        box-shadow: 0 4px 20px var(--shadow-color-light);
+        box-shadow: 0 4px 20px var(--shadow-color);
         transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     /* Headers */
     h1, h2, h3, h4, h5, h6 {
-        color: var(--header-color-light); /* Darker blue-gray for headings */
+        color: var(--header-color); /* Darker blue-gray for headings */
         font-weight: 600;
         margin-top: 1.5rem;
         margin-bottom: 0.8rem;
@@ -1824,7 +1790,7 @@ def main():
         margin-bottom: 2.5rem;
         color: white;
         text-align: center;
-        box-shadow: 0 8px 25px var(--shadow-color-light);
+        box-shadow: 0 8px 25px var(--shadow-color);
         animation: fadeIn 1s ease-out;
         transition: background 0.3s ease, box-shadow 0.3s ease;
     }
@@ -1842,32 +1808,32 @@ def main():
 
     /* Cards and Containers */
     .st-emotion-cache-1njps74.e1f1d6gn0 { /* Target Streamlit's main block container */
-        background-color: var(--background-card-light);
+        background-color: var(--background-card);
         padding: 2rem;
         border-radius: 10px;
-        box-shadow: 0 4px 15px var(--shadow-color-light);
+        box-shadow: 0 4px 15px var(--shadow-color);
         margin-bottom: 2rem;
         border-left: 6px solid var(--primary-color); /* Accent border */
         transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
     .st-emotion-cache-1njps74.e1f1d6gn0:hover {
-        box-shadow: 0 6px 20px var(--shadow-color-light);
+        box-shadow: 0 6px 20px var(--shadow-color);
         transform: translateY(-2px);
         transition: all 0.3s ease-in-out;
     }
 
     /* Metric Cards */
     div[data-testid="stVerticalBlock"] > div > div > div[data-testid="stMarkdownContainer"] > div {
-        background-color: var(--background-card-light);
+        background-color: var(--background-card);
         border-radius: 10px;
         padding: 15px;
         margin-bottom: 20px;
-        box-shadow: 0 4px 10px var(--shadow-color-light);
-        border: 1px solid var(--border-color-light);
+        box-shadow: 0 4px 10px var(--shadow-color);
+        border: 1px solid var(--border-color);
         transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
     div[data-testid="stVerticalBlock"] > div > div > div[data-testid="stMarkdownContainer"] > div h4 {
-        color: var(--text-color-light);
+        color: var(--text-color);
         margin: 0;
         font-size: 1.1rem;
         transition: color 0.3s ease;
@@ -1881,13 +1847,13 @@ def main():
     div[data-testid="stVerticalBlock"] > div > div > div[data-testid="stMarkdownContainer"] > div p {
         font-size: 0.9rem;
         margin: 0;
-        color: var(--text-color-light);
+        color: var(--text-color);
         transition: color 0.3s ease;
     }
 
     /* Buttons */
     .stButton > button {
-        background-color: var(--button-bg-light);
+        background-color: var(--button-bg);
         color: white;
         border: none;
         border-radius: 8px;
@@ -1895,27 +1861,27 @@ def main():
         font-weight: bold;
         font-size: 1.05rem;
         transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-        box-shadow: 0 4px 10px var(--shadow-color-light);
+        box-shadow: 0 4px 10px var(--shadow-color);
     }
     .stButton > button:hover {
-        background-color: var(--button-hover-light);
+        background-color: var(--button-hover);
         transform: translateY(-1px);
-        box-shadow: 0 6px 15px var(--shadow-color-light);
+        box-shadow: 0 6px 15px var(--shadow-color);
     }
     .stButton > button:active {
         transform: translateY(0);
-        box-shadow: 0 2px 5px var(--shadow-color-light);
+        box-shadow: 0 2px 5px var(--shadow-color);
     }
 
     /* Text Inputs and Text Areas */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         border-radius: 8px;
-        border: 1px solid var(--border-color-light);
+        border: 1px solid var(--border-color);
         padding: 10px 15px;
-        box-shadow: inset 0 1px 3px var(--shadow-color-light);
+        box-shadow: inset 0 1px 3px var(--shadow-color);
         transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
-        background-color: var(--background-card-light);
-        color: var(--text-color-light);
+        background-color: var(--background-card);
+        color: var(--text-color);
     }
     .stTextInput > div > div > input:focus, .stTextArea > div > div > textarea:focus {
         border-color: var(--primary-color);
@@ -1926,27 +1892,27 @@ def main():
     /* Selectbox */
     .stSelectbox > div > div {
         border-radius: 8px;
-        border: 1px solid var(--border-color-light);
-        box-shadow: inset 0 1px 3px var(--shadow-color-light);
-        background-color: var(--background-card-light);
-        color: var(--text-color-light);
+        border: 1px solid var(--border-color);
+        box-shadow: inset 0 1px 3px var(--shadow-color);
+        background-color: var(--background-card);
+        color: var(--text-color);
         transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
 
     /* Expander Styling */
     div.stExpander > div:first-child {
-        background-color: var(--tab-bg-light); /* Light gray for expander header */
+        background-color: var(--tab-bg); /* Light gray for expander header */
         border-left: 5px solid var(--secondary-color); /* Purple accent */
         border-radius: 8px;
         padding: 0.8rem 1rem;
         font-weight: 600;
-        color: var(--header-color-light);
+        color: var(--header-color);
         margin-bottom: 0.5rem;
         transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     }
     div.stExpander > div:nth-child(2) {
-        background-color: var(--background-card-light);
-        border: 1px solid var(--border-color-light);
+        background-color: var(--background-card);
+        border: 1px solid var(--border-color);
         border-top: none;
         border-radius: 0 0 8px 8px;
         padding: 1.2rem;
@@ -1960,27 +1926,27 @@ def main():
         margin-bottom: 1.5rem;
     }
     .stTabs [data-baseweb="tab"] {
-        background-color: var(--tab-bg-light);
+        background-color: var(--tab-bg);
         border-radius: 8px 8px 0px 0px;
         padding: 12px 20px;
         font-weight: 600;
-        color: var(--text-color-light);
+        color: var(--text-color);
         transition: all 0.3s ease;
     }
     .stTabs [data-baseweb="tab"]:hover {
-        background-color: var(--tab-hover-light);
-        color: var(--header-color-light);
+        background-color: var(--tab-hover);
+        color: var(--header-color);
     }
     .stTabs [aria-selected="true"] {
-        background-color: var(--tab-selected-light);
+        background-color: var(--tab-selected);
         color: white;
-        box-shadow: 0 2px 8px var(--shadow-color-light);
+        box-shadow: 0 2px 8px var(--shadow-color);
     }
 
     /* Sidebar */
     .sidebar .sidebar-content {
-        background-color: var(--sidebar-bg-light); /* Dark blue-gray for sidebar */
-        color: var(--sidebar-text-light);
+        background-color: var(--sidebar-bg); /* Dark blue-gray for sidebar */
+        color: var(--sidebar-text);
         transition: background-color 0.3s ease, color 0.3s ease;
     }
     .sidebar .stButton > button {
@@ -1990,7 +1956,7 @@ def main():
         transition: background-color 0.3s ease;
     }
     .sidebar .stButton > button:hover {
-        background-color: var(--button-hover-light);
+        background-color: var(--button-hover);
     }
 
     /* Alerts/Messages */
@@ -2001,19 +1967,19 @@ def main():
         transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
     .stAlert.success {
-        background-color: var(--alert-success-bg-light);
-        color: var(--alert-success-text-light);
-        border-color: var(--alert-success-border-light);
+        background-color: var(--alert-success-bg);
+        color: var(--alert-success-text);
+        border-color: var(--alert-success-border);
     }
     .stAlert.warning {
-        background-color: var(--alert-warning-bg-light);
-        color: var(--alert-warning-text-light);
-        border-color: var(--alert-warning-border-light);
+        background-color: var(--alert-warning-bg);
+        color: var(--alert-warning-text);
+        border-color: var(--alert-warning-border);
     }
     .stAlert.error {
-        background-color: var(--alert-error-bg-light);
-        color: var(--alert-error-text-light);
-        border-color: var(--alert-error-border-light);
+        background-color: var(--alert-error-bg);
+        color: var(--alert-error-text);
+        border-color: var(--alert-error-border);
     }
 
     /* Progress Bar */
@@ -2027,7 +1993,7 @@ def main():
     .dataframe {
         border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 2px 10px var(--shadow-color-light);
+        box-shadow: 0 2px 10px var(--shadow-color);
         transition: box-shadow 0.3s ease;
     }
     .dataframe thead th {
@@ -2039,7 +2005,7 @@ def main():
         transition: background-color 0.3s ease;
     }
     .dataframe tbody tr:nth-child(even) {
-        background-color: var(--background-light);
+        background-color: var(--background);
         transition: background-color 0.3s ease;
     }
     .dataframe tbody td {
