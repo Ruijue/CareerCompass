@@ -1607,9 +1607,23 @@ def main():
     st.session_state['user_authenticated'] = True
     st.session_state['subscription_active'] = True
     
-    # Go directly to resume analysis page
-    st.session_state['current_page'] = "resume_analysis"
-    show_resume_analysis()
+    # Set default page if not set
+    if 'current_page' not in st.session_state:
+        st.session_state['current_page'] = "dashboard"
+    
+    # Route to the appropriate page based on current_page
+    if st.session_state['current_page'] == "dashboard":
+        show_dashboard()
+    elif st.session_state['current_page'] == "resume_analysis":
+        show_resume_analysis()
+    elif st.session_state['current_page'] == "resume_generator":
+        show_resume_generator()
+    elif st.session_state['current_page'] == "cover_letter_generator":
+        show_cover_letter_generator()
+    else:
+        # Default to dashboard if unknown page
+        st.session_state['current_page'] = "dashboard"
+        show_dashboard()
 
 
 if __name__ == "__main__":
