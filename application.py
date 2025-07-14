@@ -248,11 +248,6 @@ def add_navigation_sidebar():
 
     st.sidebar.markdown("---")
 
-    if st.sidebar.button("Log Out", key="nav_logout"):
-        for key in st.session_state.keys():
-            del st.session_state[key]
-        st.rerun()
-
 
 # Initialize session state for user authentication and subscription
 if 'user_authenticated' not in st.session_state:
