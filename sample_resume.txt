@@ -1,0 +1,63 @@
+John Doe
+123 Main Street, Anytown, USA 12345
+Phone: (555) 123-4567 | Email: john.doe@example.com | LinkedIn: linkedin.com/in/johndoe
+
+PROFESSIONAL SUMMARY
+Experienced software developer with 5+ years of expertise in full-stack development, specializing in Python, JavaScript, and cloud technologies. Proven track record of delivering high-quality applications and leading development teams to successful project completion.
+
+SKILLS
+Programming Languages: Python, JavaScript, TypeScript, Java, SQL
+Frameworks & Libraries: React, Node.js, Django, Flask, Express.js
+Cloud & DevOps: AWS, Docker, Kubernetes, CI/CD pipelines
+Database: PostgreSQL, MongoDB, MySQL, Redis
+Tools: Git, JIRA, Confluence, VS Code, PyCharm
+
+WORK EXPERIENCE
+
+Senior Software Developer
+ABC Tech Solutions, Anytown, USA
+January 2020 - Present
+• Led a team of 5 developers in building a cloud-based inventory management system, resulting in 30% improvement in operational efficiency for clients
+• Designed and implemented RESTful APIs using Django REST Framework, serving over 1 million requests per day
+• Optimized database queries, reducing response time by 40% and improving overall application performance
+• Implemented CI/CD pipelines using GitHub Actions, reducing deployment time from hours to minutes
+• Mentored junior developers and conducted code reviews to ensure code quality and best practices
+
+Software Developer
+XYZ Software Inc., Othertown, USA
+June 2017 - December 2019
+• Developed and maintained front-end applications using React and Redux, improving user experience and reducing bounce rate by 25%
+• Created microservices using Node.js and Express, enabling better scalability and maintainability
+• Collaborated with UX/UI designers to implement responsive designs across multiple platforms
+• Participated in Agile development processes, including daily stand-ups, sprint planning, and retrospectives
+
+Junior Developer
+Tech Startups Ltd., Smalltown, USA
+January 2016 - May 2017
+• Assisted in developing web applications using JavaScript and jQuery
+• Fixed bugs and implemented minor features in existing applications
+• Gained experience with version control systems and collaborative development
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of Technology, Anytown, USA
+Graduated: May 2015
+GPA: 3.8/4.0
+
+CERTIFICATIONS
+• AWS Certified Solutions Architect – Associate
+• MongoDB Certified Developer
+• Certified Scrum Master
+
+PROJECTS
+Personal Portfolio Website
+• Designed and developed a responsive personal portfolio website using React and Tailwind CSS
+• Implemented a blog section with a headless CMS for content management
+
+Open Source Contribution
+• Contributed to several open-source Python libraries, including bug fixes and feature enhancements
+• Maintained a personal utility library with over 500 stars on GitHub
+
+LANGUAGES
+• English (Native)
+• Spanish (Intermediate)
