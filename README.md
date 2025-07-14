@@ -7,6 +7,9 @@ ResumeCompass Pro is an AI-powered career toolkit that helps users optimize thei
 - **Resume Analysis**: Get detailed feedback on your resume's strengths and areas for improvement
 - **Resume Generator**: Create optimized, ATS-friendly versions of your resume
 - **Cover Letter Generator**: Generate targeted cover letters for specific job applications
+- **Resume-Job Matcher**: Evaluate how well your resume matches a job description
+- **Job Recommendation**: Get personalized job recommendations based on your resume
+- **Interview Preparation**: Generate tailored interview questions and preparation tips
 - **Skills Visualization**: Interactive visualization of your professional skills
 - **Career Dashboard**: Track your career progress and get personalized insights
 
@@ -61,6 +64,9 @@ streamlit run application.py
    - Resume Analysis
    - Resume Generator
    - Cover Letter Generator
+   - Resume-Job Matcher
+   - Job Recommendation
+   - Interview Preparation
    - Career Dashboard
 
 ## Features in Detail
@@ -85,6 +91,21 @@ streamlit run application.py
 - Customize tone and style
 - Include company-specific information
 - Download in multiple formats
+
+### Resume-Job Matcher
+
+- Evaluate how well your resume aligns with a specific job description
+- Get a percentage match and detailed analysis
+
+### Job Recommendation
+
+- Receive personalized job role and industry recommendations based on your resume
+- Option to include your preferences for more tailored suggestions
+
+### Interview Preparation
+
+- Generate common interview questions tailored to your resume and a job description
+- Get key tips for preparing for interviews
 
 ### Career Dashboard
 
@@ -130,6 +151,5 @@ For support, please open an issue in the GitHub repository or contact the mainta
 
 - [ ] Add more resume templates
 - [ ] Implement job search integration
-- [ ] Add interview preparation tools
 - [ ] Enhance ATS compatibility checking
 - [ ] Add multi-language support

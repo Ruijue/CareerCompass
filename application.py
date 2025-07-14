@@ -211,6 +211,63 @@ class JobMatchTool(BaseTool):
     def _arun(self, resume_text: str, job_description: str):
         raise NotImplementedError("This tool does not support async")
 
+
+class JobRecommendationTool(BaseTool):
+    name: str = "job_recommender"
+    description: str = "Recommends job roles and industries based on a resume and optional preferences."
+
+    def _run(self, resume_text: str, preferences: Optional[str] = None) -> str:
+        prompt_template = """
+        You are an expert career counselor. Based on the following resume:
+        {resume_text}
+
+        {preferences_info}
+
+        Recommend 5-10 suitable job roles and industries. For each recommendation, provide:
+        - Job Title
+        - Industry
+        - Key skills from the resume that align with this role
+        - A brief explanation of why it's a good fit
+
+        Format your recommendations clearly using markdown.
+        """
+        preferences_info = f"Consider the following preferences: {preferences}" if preferences else ""
+        prompt = PromptTemplate.from_template(prompt_template).format(
+            resume_text=resume_text,
+            preferences_info=preferences_info
+        )
+        return llm.invoke(prompt).content
+
+    def _arun(self, resume_text: str, preferences: Optional[str] = None):
+        raise NotImplementedError("This tool does not support async")
+
+
+class InterviewPreparationTool(BaseTool):
+    name: str = "interview_preparer"
+    description: str = "Generates interview questions and preparation tips based on a resume and optional job description."
+
+    def _run(self, resume_text: str, job_description: Optional[str] = None) -> str:
+        prompt_template = """
+        You are an expert interview coach. Based on the following resume:
+        {resume_text}
+
+        {job_description_info}
+
+        Generate 5-10 common interview questions tailored to the candidate's experience and the job requirements.
+        Also, provide 3-5 key tips for preparing for an interview for such a role.
+
+        Format your response clearly using markdown.
+        """
+        job_description_info = f"Consider this job description: {job_description}" if job_description else ""
+        prompt = PromptTemplate.from_template(prompt_template).format(
+            resume_text=resume_text,
+            job_description_info=job_description_info
+        )
+        return llm.invoke(prompt).content
+
+    def _arun(self, resume_text: str, job_description: Optional[str] = None):
+        raise NotImplementedError("This tool does not support async")
+
 # Add a helper function for consistent navigation sidebar
 
 
@@ -237,6 +294,21 @@ def add_navigation_sidebar():
         st.session_state['current_page'] = "cover_letter_generator"
         st.rerun()
 
+    # Resume-Job Matcher button
+    if st.sidebar.button("Resume-Job Matcher", key="nav_resume_job_matcher"):
+        st.session_state['current_page'] = "resume_job_matcher"
+        st.rerun()
+
+    # Job Recommendation button
+    if st.sidebar.button("Job Recommendation", key="nav_job_recommendation"):
+        st.session_state['current_page'] = "job_recommendation"
+        st.rerun()
+
+    # Interview Preparation button
+    if st.sidebar.button("Interview Preparation", key="nav_interview_preparation"):
+        st.session_state['current_page'] = "interview_preparation"
+        st.rerun()
+
     st.sidebar.markdown("---")
 
     # Global resume uploader
@@ -258,6 +330,12 @@ if 'key_insights' not in st.session_state:
     st.session_state['key_insights'] = None
 if 'uploaded_resume' not in st.session_state:
     st.session_state['uploaded_resume'] = None
+if 'job_description_text' not in st.session_state:
+    st.session_state['job_description_text'] = ""
+if 'job_recommendation_text' not in st.session_state:
+    st.session_state['job_recommendation_text'] = ""
+if 'interview_preparation_job_description' not in st.session_state:
+    st.session_state['interview_preparation_job_description'] = ""
 
 
 # Function to log user activity
@@ -917,6 +995,46 @@ def show_dashboard():
             st.session_state['current_page'] = "cover_letter_generator"
             st.rerun()
 
+    col4, col5, col6 = st.columns(3)
+    with col4:
+        st.markdown("""
+        <div style="border:1px solid #4F8BF9; padding:20px; border-radius:10px; text-align:center; 
+                   cursor:pointer; background-color:white; height:220px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <img src="" style="width:48px; margin-bottom:10px;">
+            <h3 style="color:#4F8BF9;">Resume-Job Matcher</h3>
+            <p>Evaluate how well your resume matches a job description</p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Go to Resume-Job Matcher", key="goto_resume_job_matcher", use_container_width=True):
+            st.session_state['current_page'] = "resume_job_matcher"
+            st.rerun()
+
+    with col5:
+        st.markdown("""
+        <div style="border:1px solid #4F8BF9; padding:20px; border-radius:10px; text-align:center; 
+                   cursor:pointer; background-color:white; height:220px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <img src="" style="width:48px; margin-bottom:10px;">
+            <h3 style="color:#4F8BF9;">Job Recommendation</h3>
+            <p>Get personalized job recommendations based on your resume</p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Go to Job Recommendation", key="goto_job_recommendation", use_container_width=True):
+            st.session_state['current_page'] = "job_recommendation"
+            st.rerun()
+
+    with col6:
+        st.markdown("""
+        <div style="border:1px solid #4F8BF9; padding:20px; border-radius:10px; text-align:center; 
+                   cursor:pointer; background-color:white; height:220px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <img src="" style="width:48px; margin-bottom:10px;">
+            <h3 style="color:#4F8BF9;">Interview Preparation</h3>
+            <p>Generate tailored interview questions and tips</p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Go to Interview Preparation", key="goto_interview_preparation", use_container_width=True):
+            st.session_state['current_page'] = "interview_preparation"
+            st.rerun()
+
     # Recent activity section (would be populated from database in real app)
     st.markdown("## Recent Activity")
     if st.session_state.activity_log:
@@ -1395,6 +1513,201 @@ def show_resume_analysis():
             st.info("Upload your resume and click 'Analyze Resume' to see the results.")
 
 
+def show_resume_job_matcher():
+    add_navigation_sidebar()
+
+    st.markdown('<div class="title-container"><h1>Resume-Job Matcher</h1><p>Evaluate how well your resume matches a job description</p></div>', unsafe_allow_html=True)
+
+    col_back, col_spacer = st.columns([1, 5])
+    with col_back:
+        if st.button("← Back to Dashboard", key="back_to_dashboard_from_matcher"):
+            st.session_state['current_page'] = "dashboard"
+            st.rerun()
+
+    st.markdown("### Your Resume")
+    if st.session_state.uploaded_resume:
+        st.success(f"Using resume: {st.session_state.uploaded_resume.name}")
+    else:
+        st.warning("Please upload a resume in the sidebar to use this feature.")
+        return
+
+    st.markdown("### Job Description")
+    job_description = st.text_area("Paste the job description here", height=200, key="job_description_input", value=st.session_state.job_description_text)
+    st.session_state.job_description_text = job_description # Update session state
+
+    if st.button("Analyze Match", use_container_width=True):
+        if not st.session_state.uploaded_resume or not job_description:
+            st.error("Please upload a resume and paste a job description to analyze.")
+            return
+
+        with st.spinner("Analyzing resume-job match..."):
+            uploaded_file = st.session_state.uploaded_resume
+            if uploaded_file.name.endswith('.docx'):
+                text = process_docx(uploaded_file)
+                resume_text = "\n".join([doc.page_content for doc in text])
+            else:
+                text = process_pdf(uploaded_file)
+                resume_text = "\n".join([doc.page_content for doc in text])
+
+            job_match_tool = JobMatchTool()
+            match_analysis = job_match_tool._run(resume_text, job_description)
+
+            st.success("Match analysis complete!")
+            log_activity(f"Performed resume-job match for {uploaded_file.name}")
+
+            st.markdown("### Match Analysis Results")
+            st.markdown(match_analysis)
+
+            st.download_button(
+                label="Download Match Analysis",
+                data=match_analysis,
+                file_name=f"resume_job_match_analysis_{uploaded_file.name.split('.')[0]}.md",
+                mime="text/markdown"
+            )
+
+            st.markdown("---")
+            st.markdown("### Have more questions about the match?")
+            follow_up = st.text_input("Ask a follow-up question about the match analysis", key="match_follow_up")
+
+            if follow_up:
+                with st.spinner("Generating response..."):
+                    conversation.memory.save_context(
+                        {"input": f"Resume-Job Match Analysis: {match_analysis[:1000]}..."},
+                        {"output": "I've analyzed the match."}
+                    )
+                    response = conversation.predict(input=follow_up)
+                    st.write(response)
+
+
+def show_job_recommendation():
+    add_navigation_sidebar()
+
+    st.markdown('<div class="title-container"><h1>Job Recommendation</h1><p>Get personalized job recommendations based on your resume</p></div>', unsafe_allow_html=True)
+
+    col_back, col_spacer = st.columns([1, 5])
+    with col_back:
+        if st.button("← Back to Dashboard", key="back_to_dashboard_from_recommendation"):
+            st.session_state['current_page'] = "dashboard"
+            st.rerun()
+
+    st.markdown("### Your Resume")
+    if st.session_state.uploaded_resume:
+        st.success(f"Using resume: {st.session_state.uploaded_resume.name}")
+    else:
+        st.warning("Please upload a resume in the sidebar to use this feature.")
+        return
+
+    st.markdown("### Your Preferences (Optional)")
+    preferences = st.text_area("e.g., 'remote roles in tech', 'marketing jobs in New York'", height=100, key="job_preferences_input", value=st.session_state.job_recommendation_text)
+    st.session_state.job_recommendation_text = preferences # Update session state
+
+    if st.button("Get Job Recommendations", use_container_width=True):
+        if not st.session_state.uploaded_resume:
+            st.error("Please upload a resume to get job recommendations.")
+            return
+
+        with st.spinner("Generating job recommendations..."):
+            uploaded_file = st.session_state.uploaded_resume
+            if uploaded_file.name.endswith('.docx'):
+                text = process_docx(uploaded_file)
+                resume_text = "\n".join([doc.page_content for doc in text])
+            else:
+                text = process_pdf(uploaded_file)
+                resume_text = "\n".join([doc.page_content for doc in text])
+
+            job_recommender_tool = JobRecommendationTool()
+            recommendations = job_recommender_tool._run(resume_text, preferences)
+
+            st.success("Job recommendations generated!")
+            log_activity(f"Generated job recommendations for {uploaded_file.name}")
+
+            st.markdown("### Recommended Job Roles and Industries")
+            st.markdown(recommendations)
+
+            st.download_button(
+                label="Download Recommendations",
+                data=recommendations,
+                file_name=f"job_recommendations_{uploaded_file.name.split('.')[0]}.md",
+                mime="text/markdown"
+            )
+
+            st.markdown("---")
+            st.markdown("### Have more questions about these recommendations?")
+            follow_up = st.text_input("Ask a follow-up question about the job recommendations", key="recommendation_follow_up")
+
+            if follow_up:
+                with st.spinner("Generating response..."):
+                    conversation.memory.save_context(
+                        {"input": f"Job Recommendations: {recommendations[:1000]}..."},
+                        {"output": "I've provided job recommendations."}
+                    )
+                    response = conversation.predict(input=follow_up)
+                    st.write(response)
+
+
+def show_interview_preparation():    
+    add_navigation_sidebar()    
+    
+    st.markdown('<div class="title-container"><h1>Interview Preparation</h1><p>Generate tailored interview questions and tips</p></div>', unsafe_allow_html=True)    
+    col_back, col_spacer = st.columns([1, 5])    
+    with col_back:        
+        if st.button("← Back to Dashboard", key="back_to_dashboard_from_interview"):            
+            st.session_state['current_page'] = "dashboard"            
+            st.rerun()    
+    
+    st.markdown("### Your Resume")    
+    if st.session_state.uploaded_resume:        
+        st.success(f"Using resume: {st.session_state.uploaded_resume.name}")    
+    else:        
+        st.warning("Please upload a resume in the sidebar to use this feature.")        
+        return    
+    
+    st.markdown("### Target Job Description (Optional)")    
+    job_description = st.text_area("Paste the job description here to tailor questions", height=150, key="interview_job_description_input", value=st.session_state.interview_preparation_job_description)    
+    st.session_state.interview_preparation_job_description = job_description # Update session state    
+    
+    if st.button("Generate Interview Prep", use_container_width=True):        
+        if not st.session_state.uploaded_resume:            
+            st.error("Please upload a resume to generate interview preparation materials.")            
+            return        
+        with st.spinner("Generating interview questions and tips..."):            
+            uploaded_file = st.session_state.uploaded_resume            
+            if uploaded_file.name.endswith('.docx'):                
+                text = process_docx(uploaded_file)                
+                resume_text = "\n".join([doc.page_content for doc in text])            
+            else:                
+                text = process_pdf(uploaded_file)                
+                resume_text = "\n".join([doc.page_content for doc in text])            
+                
+            interview_tool = InterviewPreparationTool()            
+            preparation_content = interview_tool._run(resume_text, job_description)            
+            
+            st.success("Interview preparation content generated!")            
+            log_activity(f"Generated interview prep for {uploaded_file.name}")            
+            
+            st.markdown("### Interview Questions and Tips")            
+            st.markdown(preparation_content)            
+            
+            st.download_button(                
+                label="Download Interview Prep",                
+                data=preparation_content,                
+                file_name=f"interview_prep_{uploaded_file.name.split('.')[0]}.md",                
+                mime="text/markdown"            
+                )           
+             
+            st.markdown("---")            
+            st.markdown("### Have more questions about interview prep?")            
+            follow_up = st.text_input("Ask a follow-up question about the interview preparation", key="interview_follow_up")            
+            
+            if follow_up:                
+                with st.spinner("Generating response..."):                    
+                    conversation.memory.save_context(                        
+                        {"input": f"Interview Preparation: {preparation_content[:1000]}..."},                        
+                        {"output": "I've provided interview preparation content."}                    
+                    )                    
+                    response = conversation.predict(input=follow_up)                    
+                    st.write(response)
+
 def main():
     # Try to set a background image for enhanced visual appeal
     # set_background("/path/to/background.png")  # Uncomment and provide path if available
@@ -1578,6 +1891,12 @@ def main():
         show_resume_generator()
     elif st.session_state['current_page'] == "cover_letter_generator":
         show_cover_letter_generator()
+    elif st.session_state['current_page'] == "resume_job_matcher":
+        show_resume_job_matcher()
+    elif st.session_state['current_page'] == "job_recommendation":
+        show_job_recommendation()
+    elif st.session_state['current_page'] == "interview_preparation":
+        show_interview_preparation()
     else:
         # Default to dashboard if unknown page
         st.session_state['current_page'] = "dashboard"
