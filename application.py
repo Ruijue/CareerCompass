@@ -1198,9 +1198,9 @@ Your resume appears to be ATS-friendly with clear section headings and standard 
                 progress_bar.progress(75)
                 time.sleep(0.5)  # Simulate processing time
 
-                result = chain({"input_documents": text},
-                               return_only_outputs=True)
-
+                # We're using the mock result that was already defined above
+                # No need to call chain again here
+                
                 progress_bar.progress(100)
                 time.sleep(0.5)  # Simulate completion
 
