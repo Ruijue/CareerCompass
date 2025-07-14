@@ -1149,14 +1149,11 @@ def show_resume_analysis():
                 #     input_key="input_documents",
                 #     output_key="output_text",
                 # )
-                # 
-                # # Now we pass only the required input_documents to the chain
-                # result = chain({"input_documents": text},
-                #                return_only_outputs=True)
                 
-                # Mock result for testing
-                result = {
-                    "output_text": """
+                # Define a mock chain function that returns predefined results
+                def chain(input_dict, return_only_outputs=False):
+                    return {
+                        "output_text": """
 # Resume Analysis
 
 ## Overview
@@ -1198,8 +1195,8 @@ Your resume appears to be ATS-friendly with clear section headings and standard 
                 progress_bar.progress(75)
                 time.sleep(0.5)  # Simulate processing time
 
-                # We're using the mock result that was already defined above
-                # No need to call chain again here
+                # Call our mock chain function
+                result = chain({"input_documents": text}, return_only_outputs=True)
                 
                 progress_bar.progress(100)
                 time.sleep(0.5)  # Simulate completion
