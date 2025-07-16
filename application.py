@@ -272,9 +272,6 @@ class InterviewPreparationTool(BaseTool):
 
 
 def add_navigation_sidebar():
-    # Theme toggle - Moved to the top
-    
-
     st.sidebar.markdown("## Navigation")
 
     # Dashboard button
@@ -719,7 +716,7 @@ def show_login_page():
 
     with col2:
         st.markdown(
-            '<div class="title-container"><h1>CareerCompass Pro</h1><p>Login to access premium career tools</p></div>', unsafe_allow_html=True)
+            '<div class="title-container"><h1>📊 CareerCompass Pro</h1><p style="color:white;">Login to access premium career tools</p></div>', unsafe_allow_html=True)
 
         with st.form("login_form"):
             st.markdown("""
@@ -732,6 +729,7 @@ def show_login_page():
             }
             div[data-testid="stFormSubmitButton"] > button {
                 background-color: #4F8BF9;
+                color: white;
                 width: 100%;
                 margin-top: 20px;
             }
@@ -752,6 +750,13 @@ def show_login_page():
                     '<p style="text-align:right;"><a href="#">Forgot password?</a></p>', unsafe_allow_html=True)
 
             submit = st.form_submit_button("Login")
+
+            if st.form_submit_button("Test User"):
+                st.session_state['user_authenticated'] = True
+                st.session_state['user_email'] = "user@example.com"
+                st.session_state['user_id'] = MOCK_USERS["user@example.com"]["id"]
+                st.session_state['current_page'] = "dashboard"
+                st.rerun()
 
             if submit:
                 with st.spinner("Authenticating..."):
@@ -777,7 +782,7 @@ def show_login_page():
 
 
 def show_signup_page():
-    st.markdown('<div class="title-container"><h1>CareerCompass Pro</h1><p>Create your account</p></div>',
+    st.markdown('<div class="title-container"><h1>📊 CareerCompass Pro</h1><p style="color:white;">Create your account</p></div>',
                 unsafe_allow_html=True)
 
     with st.form("signup_form"):
@@ -808,37 +813,34 @@ def show_signup_page():
 
 
 def show_subscription_page():
-    st.markdown('<div class="title-container"><h1>Choose Your Plan</h1><p>Select a subscription that fits your job search timeline</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="title-container"><h1>💳 Choose Your Plan</h1><p style="color:white;">Select a subscription that fits your job search timeline</p></div>', unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
         st.markdown("""
-        <div style="border:1px solid #ddd; padding: 20px; border-radius: 10px; height: 360px;">
-            <h3>2-Week Access</h3>
-            <h2>$14.99</h2>
-            <p>Perfect for quick job applications</p>
+        <div class="plan-card">
+            <h3>🚀 Free Access</h3>
+            <h2>$0.00</h2>
+            <p>Perfect for getting started</p>
             <ul>
                 <li>Resume Analysis & Optimization</li>
                 <li>Cover Letter Generation</li>
                 <li>Interview Preparation</li>
-                <li>2-Week Access</li>
+                <li>7-Day Access</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Select 2-Week Plan"):
-            success, end_date = validate_subscription(
-                st.session_state['user_id'], "2-week")
-            if success:
-                st.session_state['subscription_active'] = True
-                st.session_state['subscription_end_date'] = end_date
-                st.session_state['current_page'] = "dashboard"
-                st.rerun()
+        if st.button("Get Free Access", use_container_width=True):
+            st.session_state['subscription_active'] = True
+            st.session_state['subscription_end_date'] = datetime.now() + timedelta(days=7)
+            st.session_state['current_page'] = "dashboard"
+            st.rerun()
 
     with col2:
         st.markdown("""
-        <div style="border:1px solid #4f8bf9; padding: 20px; border-radius: 10px; background-color: #f8f9fe; height: 360px;">
-            <h3>Monthly Access</h3>
+        <div class="plan-card popular">
+            <h3>🌟 Monthly Access</h3>
             <h2>$29.99</h2>
             <p><strong>Most Popular</strong></p>
             <ul>
@@ -850,7 +852,7 @@ def show_subscription_page():
             </ul>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Select Monthly Plan"):
+        if st.button("Select Monthly Plan", use_container_width=True):
             success, end_date = validate_subscription(
                 st.session_state['user_id'], "monthly")
             if success:
@@ -861,8 +863,8 @@ def show_subscription_page():
 
     with col3:
         st.markdown("""
-        <div style="border:1px solid #ddd; padding: 20px; border-radius: 10px; height: 360px;">
-            <h3>Annual Access</h3>
+        <div class="plan-card">
+            <h3>🏆 Annual Access</h3>
             <h2>$199.99</h2>
             <p>Best Value</p>
             <ul>
@@ -875,7 +877,7 @@ def show_subscription_page():
             </ul>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Select Annual Plan"):
+        if st.button("Select Annual Plan", use_container_width=True):
             success, end_date = validate_subscription(
                 st.session_state['user_id'], "annual")
             if success:
@@ -1029,7 +1031,6 @@ def show_dashboard():
         st.markdown("""
         <div style="border:1px solid #4F8BF9; padding:20px; border-radius:10px; text-align:center; 
                    cursor:pointer; background-color:white; height:220px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <img src="" style="width:48px; margin-bottom:10px;">
             <h3 style="color:#4F8BF9;">Interview Preparation</h3>
             <p>Generate tailored interview questions and tips</p>
         </div>
@@ -1051,7 +1052,7 @@ def show_dashboard():
 def show_resume_generator():
     add_navigation_sidebar()
 
-    st.markdown('<div class="title-container"><h1>Resume Generator</h1><p>Create an optimized version of your resume</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="title-container"><h1>📝 Resume Generator</h1><p style="color:white;">Create an optimized version of your resume</p></div>', unsafe_allow_html=True)
 
     # Add a back button to return to dashboard
     col_back, col_spacer = st.columns([1, 5])
@@ -1204,7 +1205,7 @@ def show_resume_generator():
 def show_cover_letter_generator():
     add_navigation_sidebar()
 
-    st.markdown('<div class="title-container"><h1>Cover Letter Generator</h1><p>Create targeted cover letters for specific job applications</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="title-container"><h1>✉️ Cover Letter Generator</h1><p style="color:white;">Create targeted cover letters for specific job applications</p></div>', unsafe_allow_html=True)
 
     # Add a back button to return to dashboard
     col_back, col_spacer = st.columns([1, 5])
@@ -1303,7 +1304,7 @@ def show_cover_letter_generator():
 def show_resume_analysis():
     add_navigation_sidebar()
 
-    st.markdown('<div class="title-container"><h1>Resume Analysis</h1><p>Get detailed feedback on your current resume</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="title-container"><h1>📄 Resume Analysis</h1><p style="color:white;">Get detailed feedback on your current resume</p></div>', unsafe_allow_html=True)
 
     # Add a back button to return to dashboard
     col_back, col_spacer = st.columns([1, 5])
@@ -1473,9 +1474,6 @@ def show_resume_analysis():
                             st.caption(f"{category}: {score}%")
                     else:
                         st.info("No scores were extracted from the analysis.")
-                else:
-                    st.info(
-                        "Could not extract key insights. View the full analysis in the 'Analysis' tab.")
 
             with tab3:
                 # Generate skill visualization
@@ -1519,7 +1517,7 @@ def show_resume_analysis():
 def show_resume_job_matcher():
     add_navigation_sidebar()
 
-    st.markdown('<div class="title-container"><h1>Resume-Job Matcher</h1><p>Evaluate how well your resume matches a job description</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="title-container"><h1>🎯 Resume-Job Matcher</h1><p style="color:white;">Evaluate how well your resume matches a job description</p></div>', unsafe_allow_html=True)
 
     col_back, col_spacer = st.columns([1, 5])
     with col_back:
@@ -1585,7 +1583,7 @@ def show_resume_job_matcher():
 def show_job_recommendation():
     add_navigation_sidebar()
 
-    st.markdown('<div class="title-container"><h1>Job Recommendation</h1><p>Get personalized job recommendations based on your resume</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="title-container"><h1>💼 Job Recommendation</h1><p style="color:white;">Get personalized job recommendations based on your resume</p></div>', unsafe_allow_html=True)
 
     col_back, col_spacer = st.columns([1, 5])
     with col_back:
@@ -1651,7 +1649,7 @@ def show_job_recommendation():
 def show_interview_preparation():    
     add_navigation_sidebar()    
     
-    st.markdown('<div class="title-container"><h1>Interview Preparation</h1><p>Generate tailored interview questions and tips</p></div>', unsafe_allow_html=True)    
+    st.markdown('<div class="title-container"><h1>🎙️ Interview Preparation</h1><p style="color:white;">Generate tailored interview questions and tips</p></div>', unsafe_allow_html=True)    
     col_back, col_spacer = st.columns([1, 5])    
     with col_back:        
         if st.button("← Back to Dashboard", key="back_to_dashboard_from_interview"):            
@@ -1706,7 +1704,7 @@ def show_interview_preparation():
                 with st.spinner("Generating response..."):                    
                     conversation.memory.save_context(                        
                         {"input": f"Interview Preparation: {preparation_content[:1000]}..."},                        
-                        {"output": "I've provided interview preparation content."}                    
+                        {"output": "I've provided interview preparation content."}
                     )                    
                     response = conversation.predict(input=follow_up)                    
                     st.write(response)
@@ -1782,6 +1780,25 @@ def main():
         color: var(--primary-color); /* Main accent color for subheadings */
     }
 
+    /* Plan Cards */
+    .plan-card {
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        border-radius: 10px;
+        height: 400px;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: all 0.3s ease-in-out;
+    }
+    .plan-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    }
+    .plan-card.popular {
+        border: 2px solid var(--primary-color);
+        box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+    }
+
     /* Title Container (Hero Section) */
     .title-container {
         background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); /* Gradient background */
@@ -1804,6 +1821,7 @@ def main():
     .title-container p {
         font-size: 1.2rem;
         opacity: 0.9;
+        color: white;
     }
 
     /* Cards and Containers */
@@ -1998,70 +2016,51 @@ def main():
     }
     .dataframe thead th {
         background-color: var(--primary-color);
-        color: white;
-        padding: 12px 15px;
-        text-align: left;
-        font-weight: 600;
-        transition: background-color 0.3s ease;
-    }
-    .dataframe tbody tr:nth-child(even) {
-        background-color: var(--background);
-        transition: background-color 0.3s ease;
-    }
-    .dataframe tbody td {
-        padding: 10px 15px;
-        border-bottom: 1px solid var(--border-color-light);
-        transition: border-color 0.3s ease;
-    }
-    .dataframe tbody tr:last-child td {
-        border-bottom: none;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # Check if API key is available
-    api_key = get_api_key()
-    if not api_key:
-        st.error(
-            "Google API Key not found. Please set up your API key in Streamlit secrets or environment variables.")
-        st.info("For local development: Add GOOGLE_API_KEY to your .env file\nFor Streamlit deployment: Add GOOGLE_API_KEY to your app secrets")
-        return
+    if 'theme' not in st.session_state:
+        st.session_state.theme = "light"
 
-    # Bypass authentication for testing
-    st.session_state['user_authenticated'] = True
-    st.session_state['subscription_active'] = True
-    if st.session_state['user_authenticated'] and 'user_id' not in st.session_state:
-        st.session_state['user_id'] = "test_user" # Initialize with a default user ID for testing
-    
-    # Set default page if not set
+    st.markdown(f'<div data-theme="{st.session_state.theme}">', unsafe_allow_html=True)
+
+    # Initialize session state for authentication if not already set
+    if 'user_authenticated' not in st.session_state:
+        st.session_state['user_authenticated'] = False
+    if 'subscription_active' not in st.session_state:
+        st.session_state['subscription_active'] = False
     if 'current_page' not in st.session_state:
-        st.session_state['current_page'] = "dashboard"
-    
-    # Route to the appropriate page based on current_page
-    if st.session_state['current_page'] == "dashboard":
-        show_dashboard()
-    elif st.session_state['current_page'] == "resume_analysis":
-        show_resume_analysis()
-    elif st.session_state['current_page'] == "resume_generator":
-        show_resume_generator()
-    elif st.session_state['current_page'] == "cover_letter_generator":
-        show_cover_letter_generator()
-    elif st.session_state['current_page'] == "resume_job_matcher":
-        show_resume_job_matcher()
-    elif st.session_state['current_page'] == "job_recommendation":
-        show_job_recommendation()
-    elif st.session_state['current_page'] == "interview_preparation":
-        show_interview_preparation()
+        st.session_state['current_page'] = "login"
+
+    # Routing logic
+    if not st.session_state['user_authenticated']:
+        if st.session_state['current_page'] == "signup":
+            show_signup_page()
+        else:
+            show_login_page()
+    elif not st.session_state['subscription_active']:
+        show_subscription_page()
     else:
-        # Default to dashboard if unknown page
-        st.session_state['current_page'] = "dashboard"
-        show_dashboard()
+        # Main application logic after authentication and subscription
+        if st.session_state['current_page'] == "dashboard":
+            show_dashboard()
+        elif st.session_state['current_page'] == "resume_analysis":
+            show_resume_analysis()
+        elif st.session_state['current_page'] == "resume_generator":
+            show_resume_generator()
+        elif st.session_state['current_page'] == "cover_letter_generator":
+            show_cover_letter_generator()
+        elif st.session_state['current_page'] == "resume_job_matcher":
+            show_resume_job_matcher()
+        elif st.session_state['current_page'] == "job_recommendation":
+            show_job_recommendation()
+        elif st.session_state['current_page'] == "interview_preparation":
+            show_interview_preparation()
+        else:
+            show_dashboard()
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
