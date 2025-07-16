@@ -272,7 +272,7 @@ class InterviewPreparationTool(BaseTool):
 
 
 def add_navigation_sidebar():
-    st.sidebar.markdown("## Navigation")
+    st.sidebar.markdown("<h2 style='color:white;'>Navigation</h2>", unsafe_allow_html=True)
 
     # Dashboard button
     if st.sidebar.button("Dashboard", key="nav_dashboard", use_container_width=True):
@@ -312,9 +312,11 @@ def add_navigation_sidebar():
     st.sidebar.markdown("---")
 
     # Global resume uploader
-    st.sidebar.markdown("## Upload Resume")
+    st.sidebar.markdown("<h2 style='color:white;'>Upload Resume</h2>", unsafe_allow_html=True)
+    st.sidebar.markdown(
+    "<p style='color:white;'>Upload Resume Once for All Tools</p>",unsafe_allow_html=True)
     uploaded_file = st.sidebar.file_uploader(
-        "Upload your resume once for all tools", type=["pdf", "docx"], key="global_uploader")
+        label="", type=["pdf", "docx"], key="global_uploader")
     if uploaded_file:
         st.session_state.uploaded_resume = uploaded_file
         st.sidebar.success(f"Uploaded: {uploaded_file.name}")
@@ -962,79 +964,38 @@ def show_dashboard():
 
     with col1:
         # Make the cards clickable with enhanced styling
-        st.markdown("""
-        <div style="border:1px solid #4F8BF9; padding:20px; border-radius:10px; text-align:center; 
-                   cursor:pointer; background-color:white; height:220px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <img src="" style="width:48px; margin-bottom:10px;">
-            <h3 style="color:#4F8BF9;">Resume Analysis</h3>
-            <p>Get comprehensive feedback and insights on your current resume</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="card"><h3 style="color:#4F8BF9;">📄 Resume Analysis</h3><p>Get comprehensive feedback and insights on your current resume</p></div>""", unsafe_allow_html=True)
         if st.button("Go to Resume Analysis", key="goto_resume_analysis", use_container_width=True):
             st.session_state['current_page'] = "resume_analysis"
             st.rerun()
 
     with col2:
-        st.markdown("""
-        <div style="border:1px solid #4F8BF9; padding:20px; border-radius:10px; text-align:center; 
-                   cursor:pointer; background-color:white; height:220px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <img src="" style="width:48px; margin-bottom:10px;">
-            <h3 style="color:#4F8BF9;">Resume Generator</h3>
-            <p>Create an optimized, ATS-friendly version of your resume</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="card"><h3 style="color:#4F8BF9;">📝 Resume Generator</h3><p>Create an optimized, ATS-friendly version of your resume</p></div>""", unsafe_allow_html=True)
         if st.button("Go to Resume Generator", key="goto_resume_generator", use_container_width=True):
             st.session_state['current_page'] = "resume_generator"
             st.rerun()
 
     with col3:
-        st.markdown("""
-        <div style="border:1px solid #4F8BF9; padding:20px; border-radius:10px; text-align:center; 
-                   cursor:pointer; background-color:white; height:220px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <img src="" style="width:48px; margin-bottom:10px;">
-            <h3 style="color:#4F8BF9;">Cover Letter Generator</h3>
-            <p>Generate targeted cover letters for specific job applications</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="card"><h3 style="color:#4F8BF9;">✉️ Cover Letter Generator</h3><p>Generate targeted cover letters for specific job applications</p></div>""", unsafe_allow_html=True)
         if st.button("Go to Cover Letter Generator", key="goto_cover_letter", use_container_width=True):
             st.session_state['current_page'] = "cover_letter_generator"
             st.rerun()
 
     col4, col5, col6 = st.columns(3)
     with col4:
-        st.markdown("""
-        <div style="border:1px solid #4F8BF9; padding:20px; border-radius:10px; text-align:center; 
-                   cursor:pointer; background-color:white; height:220px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <img src="" style="width:48px; margin-bottom:10px;">
-            <h3 style="color:#4F8BF9;">Resume-Job Matcher</h3>
-            <p>Evaluate how well your resume matches a job description</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="card"><h3 style="color:#4F8BF9;">🎯 Resume-Job Matcher</h3><p>Evaluate how well your resume matches a job description</p></div>""", unsafe_allow_html=True)
         if st.button("Go to Resume-Job Matcher", key="goto_resume_job_matcher", use_container_width=True):
             st.session_state['current_page'] = "resume_job_matcher"
             st.rerun()
 
     with col5:
-        st.markdown("""
-        <div style="border:1px solid #4F8BF9; padding:20px; border-radius:10px; text-align:center; 
-                   cursor:pointer; background-color:white; height:220px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <img src="" style="width:48px; margin-bottom:10px;">
-            <h3 style="color:#4F8BF9;">Job Recommendation</h3>
-            <p>Get personalized job recommendations based on your resume</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="card"><h3 style="color:#4F8BF9;">💼 Job Recommendation</h3><p>Get personalized job recommendations based on your resume</p></div>""", unsafe_allow_html=True)
         if st.button("Go to Job Recommendation", key="goto_job_recommendation", use_container_width=True):
             st.session_state['current_page'] = "job_recommendation"
             st.rerun()
 
     with col6:
-        st.markdown("""
-        <div style="border:1px solid #4F8BF9; padding:20px; border-radius:10px; text-align:center; 
-                   cursor:pointer; background-color:white; height:220px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h3 style="color:#4F8BF9;">Interview Preparation</h3>
-            <p>Generate tailored interview questions and tips</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="card"><h3 style="color:#4F8BF9;">🎙️ Interview Preparation</h3><p>Generate tailored interview questions and tips</p></div>""", unsafe_allow_html=True)
         if st.button("Go to Interview Preparation", key="goto_interview_preparation", use_container_width=True):
             st.session_state['current_page'] = "interview_preparation"
             st.rerun()
@@ -1744,40 +1705,62 @@ def main():
         --alert-error-border: #f5c6cb;
     }
 
-    
-
     /* General Body and Layout */
     body {
         font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         color: var(--text-color);
         line-height: 1.6;
         background-color: var(--background);
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    .main {
-        background-color: var(--background-card); /* Light gray background */
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px var(--shadow-color);
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     /* Headers */
     h1, h2, h3, h4, h5, h6 {
-        color: var(--header-color); /* Darker blue-gray for headings */
+        color: var(--header-color);
         font-weight: 600;
-        margin-top: 1.5rem;
-        margin-bottom: 0.8rem;
-        transition: color 0.3s ease;
     }
-    h1 {
-        font-size: 2.5rem;
-        border-bottom: 2px solid var(--primary-color);
-        padding-bottom: 10px;
+
+    /* Title Container (Hero Section) */
+    .title-container {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        padding: 2rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2.5rem;
+        color: white;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
-    h2 {
-        font-size: 2rem;
-        color: var(--primary-color); /* Main accent color for subheadings */
+    .title-container h1 {
+        color: white;
+        border-bottom: none;
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+    .title-container p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        color: white;
+    }
+
+    /* Cards */
+    .card {
+        background-color: var(--background-card);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px var(--shadow-color);
+        margin-bottom: 2rem;
+        border-left: 6px solid var(--primary-color);
+        transition: all 0.3s ease-in-out;
+        min-height: 220px; /* Ensure consistent height */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    .card:hover {
+        box-shadow: 0 6px 20px var(--shadow-color);
+        transform: translateY(-2px);
     }
 
     /* Plan Cards */
@@ -1799,76 +1782,6 @@ def main():
         box-shadow: 0 8px 12px rgba(0,0,0,0.15);
     }
 
-    /* Title Container (Hero Section) */
-    .title-container {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); /* Gradient background */
-        padding: 2rem 1.5rem;
-        border-radius: 12px;
-        margin-bottom: 2.5rem;
-        color: white;
-        text-align: center;
-        box-shadow: 0 8px 25px var(--shadow-color);
-        animation: fadeIn 1s ease-out;
-        transition: background 0.3s ease, box-shadow 0.3s ease;
-    }
-    .title-container h1 {
-        color: white;
-        border-bottom: none;
-        font-size: 3rem;
-        margin-bottom: 0.5rem;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-    }
-    .title-container p {
-        font-size: 1.2rem;
-        opacity: 0.9;
-        color: white;
-    }
-
-    /* Cards and Containers */
-    .st-emotion-cache-1njps74.e1f1d6gn0 { /* Target Streamlit's main block container */
-        background-color: var(--background-card);
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px var(--shadow-color);
-        margin-bottom: 2rem;
-        border-left: 6px solid var(--primary-color); /* Accent border */
-        transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-    .st-emotion-cache-1njps74.e1f1d6gn0:hover {
-        box-shadow: 0 6px 20px var(--shadow-color);
-        transform: translateY(-2px);
-        transition: all 0.3s ease-in-out;
-    }
-
-    /* Metric Cards */
-    div[data-testid="stVerticalBlock"] > div > div > div[data-testid="stMarkdownContainer"] > div {
-        background-color: var(--background-card);
-        border-radius: 10px;
-        padding: 15px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 10px var(--shadow-color);
-        border: 1px solid var(--border-color);
-        transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-    div[data-testid="stVerticalBlock"] > div > div > div[data-testid="stMarkdownContainer"] > div h4 {
-        color: var(--text-color);
-        margin: 0;
-        font-size: 1.1rem;
-        transition: color 0.3s ease;
-    }
-    div[data-testid="stVerticalBlock"] > div > div > div[data-testid="stMarkdownContainer"] > div h2 {
-        color: var(--primary-color);
-        margin: 5px 0;
-        font-size: 2.2rem;
-        transition: color 0.3s ease;
-    }
-    div[data-testid="stVerticalBlock"] > div > div > div[data-testid="stMarkdownContainer"] > div p {
-        font-size: 0.9rem;
-        margin: 0;
-        color: var(--text-color);
-        transition: color 0.3s ease;
-    }
-
     /* Buttons */
     .stButton > button {
         background-color: var(--button-bg);
@@ -1878,7 +1791,7 @@ def main():
         padding: 0.6rem 1.5rem;
         font-weight: bold;
         font-size: 1.05rem;
-        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        transition: all 0.3s ease;
         box-shadow: 0 4px 10px var(--shadow-color);
     }
     .stButton > button:hover {
@@ -1886,133 +1799,18 @@ def main():
         transform: translateY(-1px);
         box-shadow: 0 6px 15px var(--shadow-color);
     }
-    .stButton > button:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 5px var(--shadow-color);
-    }
-
-    /* Text Inputs and Text Areas */
-    .stTextInput > div > div > input, .stTextArea > div > div > textarea {
-        border-radius: 8px;
-        border: 1px solid var(--border-color);
-        padding: 10px 15px;
-        box-shadow: inset 0 1px 3px var(--shadow-color);
-        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
-        background-color: var(--background-card);
-        color: var(--text-color);
-    }
-    .stTextInput > div > div > input:focus, .stTextArea > div > div > textarea:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.2rem rgba(79, 139, 249, 0.25);
-        outline: none;
-    }
-
-    /* Selectbox */
-    .stSelectbox > div > div {
-        border-radius: 8px;
-        border: 1px solid var(--border-color);
-        box-shadow: inset 0 1px 3px var(--shadow-color);
-        background-color: var(--background-card);
-        color: var(--text-color);
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-
-    /* Expander Styling */
-    div.stExpander > div:first-child {
-        background-color: var(--tab-bg); /* Light gray for expander header */
-        border-left: 5px solid var(--secondary-color); /* Purple accent */
-        border-radius: 8px;
-        padding: 0.8rem 1rem;
-        font-weight: 600;
-        color: var(--header-color);
-        margin-bottom: 0.5rem;
-        transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-    }
-    div.stExpander > div:nth-child(2) {
-        background-color: var(--background-card);
-        border: 1px solid var(--border-color);
-        border-top: none;
-        border-radius: 0 0 8px 8px;
-        padding: 1.2rem;
-        margin-left: 5px; /* Align with border-left of header */
-        transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-
-    /* Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        margin-bottom: 1.5rem;
-    }
-    .stTabs [data-baseweb="tab"] {
-        background-color: var(--tab-bg);
-        border-radius: 8px 8px 0px 0px;
-        padding: 12px 20px;
-        font-weight: 600;
-        color: var(--text-color);
-        transition: all 0.3s ease;
-    }
-    .stTabs [data-baseweb="tab"]:hover {
-        background-color: var(--tab-hover);
-        color: var(--header-color);
-    }
-    .stTabs [aria-selected="true"] {
-        background-color: var(--tab-selected);
-        color: white;
-        box-shadow: 0 2px 8px var(--shadow-color);
-    }
 
     /* Sidebar */
-    .sidebar .sidebar-content {
-        background-color: var(--sidebar-bg); /* Dark blue-gray for sidebar */
-        color: var(--sidebar-text);
-        transition: background-color 0.3s ease, color 0.3s ease;
+    [data-testid="stSidebar"] {
+        background-color: var(--sidebar-bg);
     }
-    .sidebar .stButton > button {
-        background-color: var(--secondary-color); /* Purple for sidebar buttons */
+    [data-testid="stSidebar"] .stButton > button {
+        background-color: var(--secondary-color);
         width: 100%;
         margin-bottom: 10px;
-        transition: background-color 0.3s ease;
     }
-    .sidebar .stButton > button:hover {
+    [data-testid="stSidebar"] .stButton > button:hover {
         background-color: var(--button-hover);
-    }
-
-    /* Alerts/Messages */
-    .stAlert {
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-    .stAlert.success {
-        background-color: var(--alert-success-bg);
-        color: var(--alert-success-text);
-        border-color: var(--alert-success-border);
-    }
-    .stAlert.warning {
-        background-color: var(--alert-warning-bg);
-        color: var(--alert-warning-text);
-        border-color: var(--alert-warning-border);
-    }
-    .stAlert.error {
-        background-color: var(--alert-error-bg);
-        color: var(--alert-error-text);
-        border-color: var(--alert-error-border);
-    }
-
-    /* Progress Bar */
-    .stProgress > div > div > div > div {
-        background-color: var(--primary-color);
-        border-radius: 8px;
-        transition: background-color 0.3s ease;
-    }
-
-    /* Table/DataFrame */
-    .dataframe {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px var(--shadow-color);
-        transition: box-shadow 0.3s ease;
     }
     .dataframe thead th {
         background-color: var(--primary-color);
