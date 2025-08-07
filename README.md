@@ -1,6 +1,6 @@
-# ResumeCompass Pro
+# CareerCompass
 
-ResumeCompass Pro is an AI-powered career toolkit that helps users optimize their resumes, generate targeted cover letters, and receive detailed career guidance. Built with Streamlit and powered by Google's Gemini AI, it provides a modern, user-friendly interface for career development.
+CareerCompass is an AI-powered career toolkit that helps users optimize their resumes, generate targeted cover letters, and receive detailed career guidance. Built with Streamlit and powered by Google's Gemini AI, it provides a modern, user-friendly interface for career development.
 
 ## Features
 
