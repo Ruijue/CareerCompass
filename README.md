@@ -24,8 +24,8 @@ CareerCompass is an AI-powered career toolkit that helps users optimize their re
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/ResumeCompass.git
-cd ResumeCompass
+git clone https://github.com/yourusername/CareerCompass.git
+cd CareerCompass
 ```
 
 2. Create a virtual environment (recommended):
