@@ -88,56 +88,17 @@ def initialize_llm():
 
     if not api_key:
         return None
-        
-#     # For testing purposes, create a mock LLM that returns predefined responses
-#     class MockLLM:
-#         def invoke(self, prompt):
-#             return type('obj', (object,), {
-#                 'content': """
-# # Resume Analysis
-
-# ## Overview
-# This is a well-structured resume that highlights your experience in software development and project management.
-
-# ## Strengths
-# - Clear organization with distinct sections
-# - Good use of bullet points to highlight achievements
-# - Relevant technical skills are listed
-# - Education and certifications are well presented
-
-# ## Areas for Improvement
-# - Consider adding more quantifiable achievements
-# - Some bullet points could be more concise
-# - Add a brief professional summary at the top
-
-# ## Skills Assessment
-# - Technical Skills: Strong
-# - Communication: Good
-# - Leadership: Demonstrated through project management
-# - Problem-solving: Evident in project descriptions
-
-# ## Recommendations
-# 1. Add metrics to demonstrate impact (e.g., improved efficiency by X%)
-# 2. Tailor skills section to match job descriptions
-# 3. Consider adding a brief professional summary
-# 4. Ensure consistent formatting throughout
-
-# ## ATS Compatibility
-# Your resume appears to be ATS-friendly with clear section headings and standard formatting.
-# """
-#             })
     
-#     # Return the mock LLM instead of the real one
-#     return MockLLM()
-    
-    # Original implementation:
+    # Use the official LangChain Google Generative AI wrapper
     return ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",
+        model="gemini-2.5-flash",  # Using a standard and powerful model
+        google_api_key=api_key,
         temperature=0.2,
         top_p=0.95,
         top_k=40,
         max_output_tokens=2048,
-        google_api_key=api_key)
+        convert_system_message_to_human=True  # For better compatibility
+    )
 
 
 # Initialize LLM with API key and advanced parameters
@@ -580,7 +541,7 @@ def generate_cover_letter(resume_text, job_description, company_info, tone="prof
 # AI-powered function to extract structured insights from analysis text
 def extract_key_insights(analysis_text: str) -> Dict[str, Any]:
     prompt = f"""
-    You are an expert in parsing and structuring information. From the following resume analysis, extract the key insights in JSON format. The JSON object should include:
+    You are an expert in parsing and structuring information. From the following resume analysis, extract the key insights in a valid JSON format. The JSON object should include:
     - "strengths": A list of 3-5 key strengths.
     - "weaknesses": A list of 2-4 areas for improvement.
     - "scores": A dictionary of scores (Overall, Format, Content, ATS Compatibility) from 0-100.
@@ -588,16 +549,32 @@ def extract_key_insights(analysis_text: str) -> Dict[str, Any]:
     Analysis Text:
     {analysis_text}
 
-    Respond with ONLY the JSON object.
+    IMPORTANT: Respond with ONLY the JSON object. The JSON should be RFC8259 compliant. Ensure all strings are properly escaped (e.g. use \" for quotes within strings).
     """
     try:
         response = llm.invoke(prompt).content
-        # Clean up the response to ensure it is valid JSON
+        # Clean up the response to find the JSON block
         json_response = response.strip()
-        if json_response.startswith('```json'):
-            json_response = json_response[7:-3].strip()
-        insights = json.loads(json_response)
-        return insights
+
+        # Find the start and end of the JSON object
+        start_index = json_response.find('{')
+        end_index = json_response.rfind('}')
+
+        if start_index != -1 and end_index > start_index:
+            json_str = json_response[start_index:end_index+1]
+            insights = json.loads(json_str)
+            return insights
+        else:
+            st.error("Error extracting insights: No JSON object found in the response.")
+            st.text("LLM Response:")
+            st.text(response)
+            return None
+            
+    except json.JSONDecodeError as e:
+        st.error(f"Error extracting insights: Failed to decode JSON. {e}")
+        st.text("LLM Response:")
+        st.text(response)
+        return None
     except Exception as e:
         st.error(f"Error extracting insights: {e}")
         return None
@@ -1325,9 +1302,52 @@ def show_resume_analysis():
 
                 # Setup enhanced prompts with more detailed instructions
                 prompt_template_str = """
-                You are a professional CV analyzer with expertise in resume evaluation and career coaching.
-                Write a detailed analysis of the following resume content:
+                You are an expert career coach and professional resume analyzer. Your goal is to provide a comprehensive, insightful, and actionable evaluation of the provided resume.
+
+                **Resume Content:**
+                ---
                 {text}
+                ---
+
+                **Analysis Instructions:**
+
+                Please provide a detailed, section-by-section analysis of the resume. Structure your feedback using markdown for clarity. Cover the following areas:
+
+                ## 📝 Overall Impression & Summary
+                - Provide a brief summary of the candidate's professional profile.
+                - Give a first impression of the resume. Is it professional, easy to read, and compelling?
+
+                ## 🎨 Formatting & Readability
+                - **Layout:** Is the layout clean, professional, and easy to follow? Is there good use of white space?
+                - **Font:** Is the font choice and size appropriate?
+                - **Consistency:** Are formatting elements (like dates, titles, and bullet points) consistent throughout the resume?
+                - **Length:** Is the resume length appropriate for the candidate's experience level?
+
+                ## 💪 Strengths
+                - Identify 3-5 key strengths of the resume.
+                - For each strength, provide a specific example from the resume text.
+                - Explain *why* it's a strength (e.g., "Quantifiable achievement," "Strong action verb," "Highlights relevant skill").
+
+                ## 📉 Areas for Improvement
+                - Identify 3-5 areas where the resume could be improved.
+                - Be specific. Instead of saying "weak summary," say "The professional summary is a bit generic. It could be improved by tailoring it to a specific job target and including 1-2 key achievements."
+                - Provide concrete examples and suggestions for improvement for each point.
+
+                ## 🤖 ATS (Applicant Tracking System) Compatibility
+                - **Keywords:** Does the resume seem to be optimized with relevant keywords for a specific industry or role? (If a target role is not specified, assess generally based on the content).
+                - **Formatting:** Is the formatting simple enough for ATS parsing? (e.g., avoids tables, columns, and excessive graphics).
+                - **Sections:** Are standard section headers like "Experience," "Education," and "Skills" used?
+
+                ## 🚀 Actionable Recommendations
+                - Provide a final summary of the most critical changes the candidate should make.
+                - Offer 2-3 high-impact recommendations to make the resume stand out.
+
+                ## 💯 Final Scores
+                - Provide scores on a scale of 0-100 for the following categories:
+                  - **Overall:** Your final score for the resume.
+                  - **Format:** Score for formatting and readability.
+                  - **Content:** Score for the quality and impact of the content.
+                  - **ATS Compatibility:** Score for ATS-friendliness.
                 """
 
                 # Create a proper PromptTemplate object with only the text variable
@@ -1431,8 +1451,11 @@ def show_resume_analysis():
                     scores = insights.get("scores", {})
                     if scores:
                         for category, score in scores.items():
-                            st.progress(score / 100)
-                            st.caption(f"{category}: {score}%")
+                            if score is not None:
+                                st.progress(score / 100)
+                                st.caption(f"{category}: {score}%")
+                            else:
+                                st.caption(f"{category}: N/A")
                     else:
                         st.info("No scores were extracted from the analysis.")
 
@@ -1681,6 +1704,8 @@ def main():
     :root {
         --primary-color: #4f8bf9;
         --secondary-color: #6a5acd;
+        
+        /* Light Theme */
         --background: #f0f2f6;
         --background-card: #ffffff;
         --text-color: #333;
@@ -1689,20 +1714,18 @@ def main():
         --shadow-color: rgba(0, 0, 0, 0.08);
         --sidebar-bg: #2c3e50;
         --sidebar-text: white;
-        --button-bg: var(--primary-color);
-        --button-hover: #3a7bd5;
-        --tab-bg: #e9ecef;
-        --tab-hover: #dee2e6;
-        --tab-selected: var(--primary-color);
-        --alert-success-bg: #d4edda;
-        --alert-success-text: #155724;
-        --alert-success-border: #c3e6cb;
-        --alert-warning-bg: #fff3cd;
-        --alert-warning-text: #856404;
-        --alert-warning-border: #ffeeba;
-        --alert-error-bg: #f8d7da;
-        --alert-error-text: #721c24;
-        --alert-error-border: #f5c6cb;
+    }
+
+    body.theme--dark {
+        /* Dark Theme */
+        --background: #1a1a1a;
+        --background-card: #2a2a2a;
+        --text-color: #f0f0f0;
+        --header-color: #ffffff;
+        --border-color: #444;
+        --shadow-color: rgba(0, 0, 0, 0.4);
+        --sidebar-bg: #2a2a2a;
+        --sidebar-text: #f0f0f0;
     }
 
     /* General Body and Layout */
@@ -1727,10 +1750,12 @@ def main():
         margin-bottom: 2.5rem;
         color: white;
         text-align: center;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 25px var(--shadow-color);
+    }
+    .title-container h1, .title-container p {
+        color: white;
     }
     .title-container h1 {
-        color: white;
         border-bottom: none;
         font-size: 3rem;
         margin-bottom: 0.5rem;
@@ -1739,12 +1764,12 @@ def main():
     .title-container p {
         font-size: 1.2rem;
         opacity: 0.9;
-        color: white;
     }
 
     /* Cards */
     .card {
         background-color: var(--background-card);
+        color: var(--text-color);
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 15px var(--shadow-color);
@@ -1758,6 +1783,9 @@ def main():
         align-items: center;
         text-align: center;
     }
+    .card h3 {
+        color: var(--primary-color);
+    }
     .card:hover {
         box-shadow: 0 6px 20px var(--shadow-color);
         transform: translateY(-2px);
@@ -1769,22 +1797,23 @@ def main():
         padding: 20px;
         border-radius: 10px;
         height: 400px;
-        background-color: white;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        background-color: var(--background-card);
+        box-shadow: 0 4px 6px var(--shadow-color);
         transition: all 0.3s ease-in-out;
+        color: var(--text-color);
     }
     .plan-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 8px 15px var(--shadow-color);
     }
     .plan-card.popular {
         border: 2px solid var(--primary-color);
-        box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 12px var(--shadow-color);
     }
 
     /* Buttons */
     .stButton > button {
-        background-color: var(--button-bg);
+        background-color: var(--primary-color);
         color: white;
         border: none;
         border-radius: 8px;
@@ -1795,7 +1824,7 @@ def main():
         box-shadow: 0 4px 10px var(--shadow-color);
     }
     .stButton > button:hover {
-        background-color: var(--button-hover);
+        background-color: #3a7bd5;
         transform: translateY(-1px);
         box-shadow: 0 6px 15px var(--shadow-color);
     }
@@ -1804,13 +1833,16 @@ def main():
     [data-testid="stSidebar"] {
         background-color: var(--sidebar-bg);
     }
+    [data-testid="stSidebar"] h2, [data-testid="stSidebar"] p {
+        color: var(--sidebar-text) !important;
+    }
     [data-testid="stSidebar"] .stButton > button {
         background-color: var(--secondary-color);
         width: 100%;
         margin-bottom: 10px;
     }
     [data-testid="stSidebar"] .stButton > button:hover {
-        background-color: var(--button-hover);
+        background-color: #3a7bd5;
     }
     .dataframe thead th {
         background-color: var(--primary-color);
